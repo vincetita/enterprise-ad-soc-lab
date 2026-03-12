@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enterprise AD SOC Lab | Portfolio</title>
+  <meta name="description" content="Enterprise Active Directory SOC Lab portfolio featuring Wazuh, Security Onion, Sysmon, Windows Server 2025, Ubuntu, Kali, and MITRE ATT&CK-aligned attack simulations." />
+  <style>
+    :root {
+      --bg: #07111f;
+      --bg-soft: #0d1b2e;
+      --card: #101b2d;
+      --line: #22324f;
+      --text: #e8eef9;
+      --muted: #a6b6d3;
+      --cyan: #67e8f9;
+      --blue: #60a5fa;
+      --violet: #8b5cf6;
+      --green: #22c55e;
+      --shadow: 0 12px 28px rgba(0,0,0,.28);
+      --radius: 18px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(96,165,250,.15), transparent 30%),
+        radial-gradient(circle at top right, rgba(139,92,246,.12), transparent 28%),
+        linear-gradient(180deg, #06101d 0%, #07111f 100%);
+      line-height: 1.65;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+      background: rgba(7,17,31,.82);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      padding: 14px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      color: #07111f;
+      font-weight: 900;
+      box-shadow: var(--shadow);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .nav-links a:hover {
+      color: var(--cyan);
+    }
+
+    .hero {
+      padding: 72px 0 38px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(103,232,249,.22);
+      background: rgba(103,232,249,.06);
+      color: var(--cyan);
+      font-size: 13px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: clamp(2.2rem, 5vw, 4.1rem);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 720px;
+    }
+
+    .cta-row {
+      margin-top: 26px;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 13px 18px;
+      border-radius: 12px;
+      font-weight: 700;
+      transition: .2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      color: #07111f;
+      box-shadow: var(--shadow);
+    }
+
+    .btn-secondary {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+    }
+
+    .card {
+      background: rgba(16,27,45,.88);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    .hero-card {
+      background:
+        radial-gradient(circle at top right, rgba(103,232,249,.12), transparent 35%),
+        linear-gradient(180deg, rgba(96,165,250,.08), rgba(16,27,45,.95));
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .metric {
+      padding: 16px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 1.35rem;
+      margin-bottom: 4px;
+    }
+
+    section {
+      padding: 28px 0;
+    }
+
+    .section-head {
+      margin-bottom: 16px;
+    }
+
+    .section-head h2 {
+      margin: 0 0 10px;
+      font-size: clamp(1.6rem, 3vw, 2.3rem);
+      color: var(--cyan);
+      letter-spacing: -0.03em;
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 820px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(103,232,249,.18);
+      background: rgba(103,232,249,.07);
+      color: var(--cyan);
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 1.15rem;
+    }
+
+    .card p, .card li {
+      color: var(--muted);
+    }
+
+    .clean {
+      list-style: none;
+      padding: 0;
+      margin: 12px 0 0;
+    }
+
+    .clean li {
+      padding: 10px 0;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+
+    .clean li:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .architecture-box {
+      padding: 22px;
+      border-radius: 18px;
+      background: #0a1322;
+      border: 1px solid var(--line);
+      overflow: auto;
+      white-space: pre;
+      font-family: Consolas, monospace;
+      color: #d6e3fb;
+      line-height: 1.75;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 14px;
+    }
+
+    .timeline-item {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 16px;
+      align-items: start;
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+    }
+
+    .timeline-step {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      color: #07111f;
+      font-weight: 800;
+      box-shadow: var(--shadow);
+    }
+
+    .badge-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .skill-badge {
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      font-size: 14px;
+      box-shadow: 0 6px 18px rgba(0,0,0,.16);
+    }
+
+    .heatmap-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .heatmap-cell {
+      padding: 18px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: #101b2d;
+      box-shadow: 0 10px 24px rgba(0,0,0,.22);
+    }
+
+    .heatmap-cell strong {
+      display: block;
+      font-size: 1.1rem;
+      color: var(--cyan);
+      margin-bottom: 6px;
+    }
+
+    .heatmap-cell span {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .heatmap-cell small {
+      color: var(--muted);
+    }
+
+    .detected {
+      border-color: rgba(34,197,94,.45);
+      background: linear-gradient(180deg, rgba(34,197,94,.08), #101b2d);
+    }
+
+    .flow-wrapper {
+      background: rgba(16,27,45,.88);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .flow-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .flow-btn {
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .flow-btn.active {
+      background: linear-gradient(135deg, var(--cyan), var(--blue));
+      color: #07111f;
+      border-color: transparent;
+    }
+
+    .flow-panel {
+      display: none;
+      border-top: 1px solid rgba(255,255,255,.06);
+      padding-top: 18px;
+    }
+
+    .flow-panel.active {
+      display: block;
+    }
+
+    code {
+      background: rgba(255,255,255,.06);
+      padding: 2px 6px;
+      border-radius: 6px;
+      color: #d8e7ff;
+    }
+
+    .footer {
+      padding: 34px 0 60px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 960px) {
+      .hero-grid,
+      .grid-3,
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        display: none;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .hero {
+        padding-top: 48px;
+      }
+
+      .metric-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .timeline-item {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <div class="brand">
+        <div class="brand-icon">SOC</div>
+        <div>Enterprise AD SOC Lab</div>
+      </div>
+      <div class="nav-links">
+        <a href="#overview">Overview</a>
+        <a href="#skills">Skills</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#mitre">MITRE</a>
+        <a href="#timeline">Timeline</a>
+        <a href="#investigation">Investigation</a>
+        <a href="#docs">Docs</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero" id="overview">
+    <div class="container hero-grid">
+      <div>
+        <div class="eyebrow">Blue Team • Detection Engineering • GitHub Pages Ready</div>
+        <h1>Enterprise Active Directory SOC Lab Portfolio</h1>
+        <p class="lead">
+          A recruiter-focused cybersecurity portfolio demonstrating an enterprise-style SOC lab built with
+          <strong>Windows Server 2025</strong>, <strong>Windows 11</strong>, <strong>Ubuntu</strong>,
+          <strong>Kali Linux</strong>, <strong>Wazuh</strong>, <strong>Security Onion</strong>,
+          and <strong>Sysmon</strong>. The project documents infrastructure deployment, detections,
+          attack simulations, investigations, and MITRE ATT&CK mapping.
+        </p>
+
+        <div class="cta-row">
+          <a class="btn btn-primary" href="https://github.com/vincetita/enterprise-ad-soc-lab">View GitHub Repository</a>
+          <a class="btn btn-secondary" href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/README.md">Read Project README</a>
+        </div>
+      </div>
+
+      <div class="card hero-card">
+        <span class="tag">Lab Snapshot</span>
+        <h3>Multi-Layer SOC Visibility</h3>
+        <p>
+          This environment combines endpoint telemetry, network security monitoring, SIEM correlation,
+          adversary simulation, and investigation workflows into one documented portfolio.
+        </p>
+
+        <div class="metric-grid">
+          <div class="metric">
+            <strong>6</strong>
+            Core systems integrated
+          </div>
+          <div class="metric">
+            <strong>3</strong>
+            Monitoring layers
+          </div>
+          <div class="metric">
+            <strong>6+</strong>
+            Attack simulations
+          </div>
+          <div class="metric">
+            <strong>MITRE</strong>
+            ATT&CK aligned
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section id="skills">
+    <div class="container">
+      <div class="section-head">
+        <h2>Core SOC Skills</h2>
+        <p>
+          This project demonstrates practical blue-team capability across infrastructure, detection, monitoring, investigation, and reporting.
+        </p>
+      </div>
+
+      <div class="badge-cloud">
+        <span class="skill-badge">Wazuh SIEM</span>
+        <span class="skill-badge">Security Onion</span>
+        <span class="skill-badge">Sysmon</span>
+        <span class="skill-badge">Windows Server 2025</span>
+        <span class="skill-badge">Active Directory</span>
+        <span class="skill-badge">DNS / DHCP</span>
+        <span class="skill-badge">Windows Event Logs</span>
+        <span class="skill-badge">Linux auth.log</span>
+        <span class="skill-badge">Suricata</span>
+        <span class="skill-badge">Zeek</span>
+        <span class="skill-badge">MITRE ATT&CK</span>
+        <span class="skill-badge">Threat Hunting</span>
+        <span class="skill-badge">Detection Engineering</span>
+        <span class="skill-badge">SOC Investigations</span>
+        <span class="skill-badge">Incident Reporting</span>
+        <span class="skill-badge">Kali Linux</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="toolstack">
+    <div class="container">
+      <div class="section-head">
+        <h2>Security Tool Stack</h2>
+        <p>
+          The lab combines host telemetry, SIEM correlation, and network monitoring to simulate an enterprise SOC environment.
+        </p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <span class="tag">SIEM</span>
+          <h3>Wazuh</h3>
+          <p>Central log collection, rule-based detection, agent management, and SOC alert correlation.</p>
+        </div>
+
+        <div class="card">
+          <span class="tag">Endpoint</span>
+          <h3>Sysmon</h3>
+          <p>Detailed Windows telemetry for process creation, network activity, and suspicious command execution.</p>
+        </div>
+
+        <div class="card">
+          <span class="tag">Network</span>
+          <h3>Security Onion</h3>
+          <p>Network monitoring with Suricata IDS and Zeek metadata for visibility into scans, brute force, and lateral movement.</p>
+        </div>
+
+        <div class="card">
+          <span class="tag">Identity</span>
+          <h3>Active Directory</h3>
+          <p>Windows Server 2025 Domain Controller providing authentication, DNS, DHCP, and core Windows security logs.</p>
+        </div>
+
+        <div class="card">
+          <span class="tag">Linux</span>
+          <h3>Ubuntu</h3>
+          <p>Monitored Linux host used for SSH brute-force detection and Linux log analysis through Wazuh.</p>
+        </div>
+
+        <div class="card">
+          <span class="tag">Adversary</span>
+          <h3>Kali Linux</h3>
+          <p>Attack simulation platform used to generate recon, credential attacks, and internal movement scenarios.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <h2>Core Environment</h2>
+        <p>
+          The lab simulates a small enterprise network with identity services, Windows and Linux endpoints,
+          SIEM monitoring, IDS visibility, and a dedicated attacker system.
+        </p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <span class="tag">Identity</span>
+          <h3>DC01 — Windows Server 2025</h3>
+          <p>
+            Domain Controller providing Active Directory, DNS, DHCP, and authentication services.
+          </p>
+          <ul class="clean">
+            <li><strong>Hostname:</strong> dc01</li>
+            <li><strong>IP:</strong> 192.168.117.130</li>
+            <li><strong>Domain:</strong> corp.local</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <span class="tag">Endpoint</span>
+          <h3>Win11Client</h3>
+          <p>
+            Domain-joined workstation instrumented with Sysmon and Wazuh agent for endpoint telemetry.
+          </p>
+          <ul class="clean">
+            <li><strong>Hostname:</strong> Win11Client</li>
+            <li><strong>IP:</strong> 192.168.117.100</li>
+            <li><strong>Monitoring:</strong> Sysmon + Wazuh</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <span class="tag">Linux</span>
+          <h3>Ubuntu Server</h3>
+          <p>
+            Monitored Linux target used for SSH brute-force simulations and Linux log analysis.
+          </p>
+          <ul class="clean">
+            <li><strong>Hostname:</strong> ubuntu</li>
+            <li><strong>IP:</strong> 192.168.117.129</li>
+            <li><strong>Key Log:</strong> /var/log/auth.log</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid-3" style="margin-top:18px;">
+        <div class="card">
+          <span class="tag">SIEM</span>
+          <h3>Wazuh</h3>
+          <p>
+            Central SIEM platform aggregating endpoint logs, Linux logs, and Windows event data.
+          </p>
+          <ul class="clean">
+            <li><strong>Hostname:</strong> wazuh01</li>
+            <li><strong>IP:</strong> 192.168.117.50</li>
+            <li><strong>Role:</strong> Correlation + Alerting</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <span class="tag">Network</span>
+          <h3>Security Onion</h3>
+          <p>
+            Network IDS and NSM platform using Suricata and Zeek for traffic visibility and hunt support.
+          </p>
+          <ul class="clean">
+            <li><strong>Role:</strong> IDS / NSM</li>
+            <li><strong>Components:</strong> Suricata, Zeek</li>
+            <li><strong>Focus:</strong> Scans, SMB, SSH, anomalies</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <span class="tag">Adversary</span>
+          <h3>Kali Linux</h3>
+          <p>
+            Attacker simulation platform used to generate controlled recon, brute force, and lateral movement activity.
+          </p>
+          <ul class="clean">
+            <li><strong>Tools:</strong> nmap, hydra, smbclient</li>
+            <li><strong>Use:</strong> Purple-team validation</li>
+            <li><strong>Role:</strong> Attack simulation</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="architecture">
+    <div class="container">
+      <div class="section-head">
+        <h2>Architecture</h2>
+        <p>
+          The monitoring stack is intentionally layered so that attacks can be investigated from both endpoint and network perspectives.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="architecture-box">Kali Linux (Attacker)
+      |
+      |  Recon / brute force / SMB / PowerShell simulations
+      v
+
++------------------- Internal Lab Network 192.168.117.0/24 -------------------+
+|                                                                              |
+|   DC01 (AD DS / DNS / DHCP)  ----->  Wazuh Manager (192.168.117.50)         |
+|   Win11Client (Sysmon + Wazuh) ---->  Wazuh Manager                          |
+|   Ubuntu (auth.log + Wazuh)   ----->  Wazuh Manager                          |
+|                                                                              |
+|   All traffic between hosts  --------------------->  Security Onion          |
+|                                                      (Suricata + Zeek)       |
++------------------------------------------------------------------------------+</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="mitre">
+    <div class="container">
+      <div class="section-head">
+        <h2>MITRE ATT&CK Coverage</h2>
+        <p>
+          The lab maps simulated adversary behavior to ATT&CK techniques and validates which monitoring layers detect each stage.
+        </p>
+      </div>
+
+      <div class="heatmap-grid">
+        <div class="heatmap-cell detected">
+          <strong>T1046</strong>
+          <span>Network Service Discovery</span>
+          <small>Security Onion</small>
+        </div>
+
+        <div class="heatmap-cell detected">
+          <strong>T1110</strong>
+          <span>Brute Force</span>
+          <small>Wazuh + auth.log + Event 4625</small>
+        </div>
+
+        <div class="heatmap-cell detected">
+          <strong>T1021</strong>
+          <span>Remote Services</span>
+          <small>Windows logs + SMB visibility</small>
+        </div>
+
+        <div class="heatmap-cell detected">
+          <strong>T1068</strong>
+          <span>Privilege Escalation</span>
+          <small>Sysmon + Event 4672</small>
+        </div>
+
+        <div class="heatmap-cell detected">
+          <strong>T1053</strong>
+          <span>Scheduled Task / Job</span>
+          <small>Wazuh + Event 4698</small>
+        </div>
+
+        <div class="heatmap-cell detected">
+          <strong>T1059</strong>
+          <span>Command / PowerShell</span>
+          <small>Sysmon + Wazuh</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="timeline">
+    <div class="container">
+      <div class="section-head">
+        <h2>Attack Timeline</h2>
+        <p>
+          The attack chain below shows how adversary activity is staged and how the lab validates detection at each step.
+        </p>
+      </div>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-step">01</div>
+          <div>
+            <h3>Reconnaissance</h3>
+            <p><strong>Command:</strong> <code>nmap -sS 192.168.117.0/24</code></p>
+            <p>Detected by Security Onion through Suricata and Zeek.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-step">02</div>
+          <div>
+            <h3>Brute Force</h3>
+            <p><strong>Linux:</strong> Hydra SSH brute force against Ubuntu. <strong>Windows:</strong> repeated failed logons generating Event ID 4625.</p>
+            <p>Detected by Wazuh, Ubuntu auth.log, Windows Security logs, and Security Onion SSH traffic patterns.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-step">03</div>
+          <div>
+            <h3>Lateral Movement</h3>
+            <p><strong>Command:</strong> <code>net use \\\\192.168.117.130\\c$</code></p>
+            <p>Detected through Event 4624, SMB session visibility, and Wazuh correlation.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-step">04</div>
+          <div>
+            <h3>Privilege Escalation</h3>
+            <p><strong>Commands:</strong> <code>whoami /priv</code> and <code>runas /user:corp\\administrator cmd</code></p>
+            <p>Detected through Event 4672 and Sysmon process telemetry.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-step">05</div>
+          <div>
+            <h3>Persistence</h3>
+            <p><strong>Command:</strong> <code>schtasks /create /sc minute /mo 5 /tn "UpdateTask" /tr "cmd.exe"</code></p>
+            <p>Detected through Event 4698 and Wazuh persistence-focused rules.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-step">06</div>
+          <div>
+            <h3>Investigation</h3>
+            <p>SOC analyst correlates SIEM alerts, endpoint logs, and Security Onion evidence to validate the attack chain.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="attackflow">
+    <div class="container">
+      <div class="section-head">
+        <h2>Interactive Attack Flow</h2>
+        <p>
+          This section shows how one attack moves through the environment and how different tools observe it.
+        </p>
+      </div>
+
+      <div class="flow-wrapper">
+        <div class="flow-buttons">
+          <button class="flow-btn active" data-flow="recon" onclick="showFlow('recon')">Recon</button>
+          <button class="flow-btn" data-flow="brute" onclick="showFlow('brute')">Brute Force</button>
+          <button class="flow-btn" data-flow="lateral" onclick="showFlow('lateral')">Lateral Movement</button>
+          <button class="flow-btn" data-flow="persist" onclick="showFlow('persist')">Persistence</button>
+        </div>
+
+        <div class="flow-panel active" id="flow-recon">
+          <h3>Reconnaissance</h3>
+          <p><strong>Attack:</strong> Kali performs an Nmap scan against the lab network.</p>
+          <p><strong>Detection:</strong> Security Onion observes scan patterns through Suricata and Zeek.</p>
+          <p><strong>Evidence:</strong> Suricata alert + Zeek connection logs.</p>
+        </div>
+
+        <div class="flow-panel" id="flow-brute">
+          <h3>Brute Force</h3>
+          <p><strong>Attack:</strong> Hydra attacks Ubuntu SSH or failed Windows logons are triggered.</p>
+          <p><strong>Detection:</strong> Wazuh monitors Linux auth.log and Windows Event 4625.</p>
+          <p><strong>Evidence:</strong> Wazuh alert + endpoint logs + network evidence.</p>
+        </div>
+
+        <div class="flow-panel" id="flow-lateral">
+          <h3>Lateral Movement</h3>
+          <p><strong>Attack:</strong> Administrative SMB access is attempted against DC01.</p>
+          <p><strong>Detection:</strong> Windows Event 4624, Sysmon network activity, and SMB traffic patterns are reviewed.</p>
+          <p><strong>Evidence:</strong> Wazuh alert + Windows logs + Security Onion context.</p>
+        </div>
+
+        <div class="flow-panel" id="flow-persist">
+          <h3>Persistence</h3>
+          <p><strong>Attack:</strong> Scheduled task is created on a Windows system.</p>
+          <p><strong>Detection:</strong> Wazuh detects Event 4698 and Sysmon helps provide execution context.</p>
+          <p><strong>Evidence:</strong> Task creation logs + persistence alert.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="investigation">
+    <div class="container">
+      <div class="section-head">
+        <h2>SOC Investigation Walkthrough</h2>
+        <p>
+          Example workflow from the lab showing how a brute-force alert against Ubuntu is investigated using multiple evidence sources.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>Case Example: SSH Brute Force Against Ubuntu</h3>
+        <ul class="clean">
+          <li><strong>Step 1:</strong> Wazuh alert shows repeated SSH authentication failures.</li>
+          <li><strong>Step 2:</strong> Analyst checks <code>/var/log/auth.log</code> on Ubuntu to confirm failed password attempts.</li>
+          <li><strong>Step 3:</strong> Security Onion is reviewed for repeated SSH connections from the attacker IP.</li>
+          <li><strong>Step 4:</strong> Source IP is correlated with Kali attack activity.</li>
+          <li><strong>Step 5:</strong> Technique is mapped to <strong>T1110 — Brute Force</strong>.</li>
+          <li><strong>Step 6:</strong> Findings are documented using the incident report template.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="caseexample">
+    <div class="container">
+      <div class="section-head">
+        <h2>Live SOC Investigation Example</h2>
+        <p>
+          This example shows how a SOC analyst investigates a Windows failed logon case from alert to conclusion.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <span class="tag">Case</span>
+          <h3>Windows Failed Logon — Event ID 4625</h3>
+          <p>
+            A failed logon alert appears in Wazuh after repeated incorrect authentication attempts against the domain controller.
+          </p>
+          <ul class="clean">
+            <li><strong>Source host:</strong> Win11Client</li>
+            <li><strong>Target:</strong> DC01</li>
+            <li><strong>Log source:</strong> Windows Security Log</li>
+            <li><strong>Technique:</strong> T1110 — Brute Force</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <span class="tag">Workflow</span>
+          <h3>Analyst Steps</h3>
+          <ul class="clean">
+            <li>Review Wazuh alert details</li>
+            <li>Open Event Viewer and confirm Event ID 4625</li>
+            <li>Identify source IP and username targeted</li>
+            <li>Correlate with Sysmon or related host telemetry</li>
+            <li>Classify the event as credential attack simulation</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="docs">
+    <div class="container">
+      <div class="section-head">
+        <h2>Project Documentation</h2>
+        <p>
+          The repository is organized to show infrastructure design, monitoring configuration, attack simulation, investigation workflows, and reporting.
+        </p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <span class="tag">Architecture</span>
+          <h3>Architecture Docs</h3>
+          <p>System overview, network zones, and system relationships.</p>
+          <ul class="clean">
+            <li><a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/architecture/00-overview.md">Architecture Overview</a></li>
+            <li><a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/architecture/01-network-zones.md">Network Zones</a></li>
+            <li><a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/architecture/02-system-relationships.md">System Relationships</a></li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <span class="tag">Infrastructure</span>
+          <h3>Build Documentation</h3>
+          <p>Deployment documentation for Windows, Linux, Wazuh, Security Onion, and Kali.</p>
+          <ul class="clean">
+            <li><a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/infrastructure/03-windows-server-2025.md">Windows Server 2025</a></li>
+            <li><a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/infrastructure/04-win11client.md">Win11Client</a></li>
+            <li><a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/infrastructure/05-ubuntu.md">Ubuntu</a></li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <span class="tag">Operations</span>
+          <h3>Detection & Response</h3>
+          <p>Detection strategy, attack simulations, investigations, and MITRE reporting.</p>
+          <ul class="clean">
+            <li><a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/detections/00-detection-strategy.md">Detection Strategy</a></li>
+            <li><a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/simulations/00-simulation-index.md">Simulation Index</a></li>
+            <li><a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/reports/02-mitre-coverage-matrix.md">MITRE Coverage Matrix</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="section-head">
+        <h2>Why This Portfolio Matters</h2>
+        <p>
+          This project demonstrates not only tool installation, but also log analysis, alert validation, troubleshooting, and SOC investigation thinking.
+        </p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <span class="tag">Infrastructure</span>
+          <h3>Build Skills</h3>
+          <p>Active Directory, DNS, DHCP, endpoint onboarding, SIEM deployment, and Linux server monitoring.</p>
+        </div>
+        <div class="card">
+          <span class="tag">Detection</span>
+          <h3>Blue Team Skills</h3>
+          <p>Wazuh rule analysis, Sysmon telemetry review, Security Onion hunts, and MITRE ATT&CK mapping.</p>
+        </div>
+        <div class="card">
+          <span class="tag">Troubleshooting</span>
+          <h3>Real-World Problem Solving</h3>
+          <p>Resolved dual-NIC DNS issues, Wazuh database socket failure, agent registration issues, and telemetry validation problems.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="card">
+        <h3 style="margin-top:0;">Enterprise AD SOC Lab</h3>
+        <p style="margin-bottom:0;">
+          Built to demonstrate practical SOC analyst, blue-team, and detection engineering skills in a layered enterprise-style monitoring environment.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function showFlow(name) {
+      const panels = document.querySelectorAll('.flow-panel');
+      const buttons = document.querySelectorAll('.flow-btn');
+
+      panels.forEach(panel => panel.classList.remove('active'));
+      buttons.forEach(button => button.classList.remove('active'));
+
+      document.getElementById('flow-' + name).classList.add('active');
+
+      buttons.forEach(button => {
+        if (button.getAttribute('data-flow') === name) {
+          button.classList.add('active');
+        }
+      });
+    }
+  </script>
+</body>
+</html>

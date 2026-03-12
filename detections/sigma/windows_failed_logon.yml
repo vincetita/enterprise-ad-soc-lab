@@ -1,0 +1,13 @@
+
+title: Windows Failed Logon Detection
+logsource:
+  product: windows
+  service: security
+
+detection:
+  selection:
+    EventID: 4625
+  condition: selection
+
+level: medium
+description: Detects failed Windows login attempts
