@@ -1,13 +1,15 @@
-
-title: Windows Failed Logon Detection
+title: Windows Failed Logon
+id: 3fa8f847-demo-portfolio
+status: experimental
+description: Detect repeated failed Windows logon attempts in the SOC lab.
 logsource:
   product: windows
   service: security
-
 detection:
   selection:
     EventID: 4625
   condition: selection
-
 level: medium
-description: Detects failed Windows login attempts
+tags:
+  - attack.credential_access
+  - attack.t1110
