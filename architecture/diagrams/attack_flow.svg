@@ -1,0 +1,215 @@
+<svg width="1500" height="900" viewBox="0 0 1500 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#07111f"></stop>
+      <stop offset="100%" stop-color="#0d1b2e"></stop>
+    </linearGradient>
+
+    <linearGradient id="attackGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ef4444"></stop>
+      <stop offset="100%" stop-color="#b91c1c"></stop>
+    </linearGradient>
+
+    <linearGradient id="detectGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#06b6d4"></stop>
+      <stop offset="100%" stop-color="#0891b2"></stop>
+    </linearGradient>
+
+    <linearGradient id="huntGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#8b5cf6"></stop>
+      <stop offset="100%" stop-color="#6d28d9"></stop>
+    </linearGradient>
+
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="14" flood-color="#000000" flood-opacity="0.28"></feDropShadow>
+    </filter>
+
+    <marker id="arrowWhite" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#e5eefc"></path>
+    </marker>
+  </defs>
+
+  <rect width="1500" height="900" fill="url(#bgGrad)"></rect>
+
+  <text x="750" y="56" text-anchor="middle" font-family="Arial, sans-serif" font-size="34" font-weight="700" fill="#e5eefc">
+    SOC Lab Attack Flow and Detection Mapping
+  </text>
+  <text x="750" y="90" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#94a3b8">
+    From adversary action to endpoint telemetry, SIEM alerting, and network visibility
+  </text>
+
+  <!-- Left lane title -->
+  <text x="230" y="150" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#fca5a5">
+    ATTACK STAGES
+  </text>
+
+  <!-- Middle lane title -->
+  <text x="760" y="150" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#67e8f9">
+    DETECTION SOURCES
+  </text>
+
+  <!-- Right lane title -->
+  <text x="1270" y="150" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#c4b5fd">
+    ANALYST OUTCOME
+  </text>
+
+  <!-- Stage 1 -->
+  <rect x="80" y="190" width="300" height="90" rx="20" fill="url(#attackGrad)" filter="url(#shadow)"></rect>
+  <text x="230" y="225" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#fff">
+    1. Reconnaissance
+  </text>
+  <text x="230" y="252" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#fee2e2">
+    Nmap scan from Kali
+  </text>
+
+  <rect x="530" y="185" width="460" height="100" rx="20" fill="url(#detectGrad)" filter="url(#shadow)"></rect>
+  <text x="760" y="220" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#06202a">
+    Security Onion
+  </text>
+  <text x="760" y="247" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#083344">
+    Suricata scan alert + Zeek connection logs
+  </text>
+  <text x="760" y="269" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#083344">
+    MITRE T1046 — Network Service Discovery
+  </text>
+
+  <rect x="1110" y="190" width="320" height="90" rx="20" fill="url(#huntGrad)" filter="url(#shadow)"></rect>
+  <text x="1270" y="225" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#f5f3ff">
+    Recon Confirmed
+  </text>
+  <text x="1270" y="252" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#ede9fe">
+    Attacker IP + scan pattern identified
+  </text>
+
+  <!-- Stage 2 -->
+  <rect x="80" y="325" width="300" height="90" rx="20" fill="url(#attackGrad)" filter="url(#shadow)"></rect>
+  <text x="230" y="360" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#fff">
+    2. Brute Force
+  </text>
+  <text x="230" y="387" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#fee2e2">
+    Hydra / failed Windows logons
+  </text>
+
+  <rect x="530" y="320" width="460" height="100" rx="20" fill="url(#detectGrad)" filter="url(#shadow)"></rect>
+  <text x="760" y="355" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#06202a">
+    Wazuh + Windows / Linux Logs
+  </text>
+  <text x="760" y="382" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#083344">
+    Event 4625 + auth.log + SIEM correlation
+  </text>
+  <text x="760" y="404" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#083344">
+    MITRE T1110 — Brute Force
+  </text>
+
+  <rect x="1110" y="325" width="320" height="90" rx="20" fill="url(#huntGrad)" filter="url(#shadow)"></rect>
+  <text x="1270" y="360" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#f5f3ff">
+    Credential Attack Identified
+  </text>
+  <text x="1270" y="387" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#ede9fe">
+    Source host and target account confirmed
+  </text>
+
+  <!-- Stage 3 -->
+  <rect x="80" y="460" width="300" height="90" rx="20" fill="url(#attackGrad)" filter="url(#shadow)"></rect>
+  <text x="230" y="495" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#fff">
+    3. Lateral Movement
+  </text>
+  <text x="230" y="522" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#fee2e2">
+    SMB access / network logon
+  </text>
+
+  <rect x="530" y="455" width="460" height="100" rx="20" fill="url(#detectGrad)" filter="url(#shadow)"></rect>
+  <text x="760" y="490" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#06202a">
+    Wazuh + Security Onion
+  </text>
+  <text x="760" y="517" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#083344">
+    Event 4624 + SMB traffic context
+  </text>
+  <text x="760" y="539" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#083344">
+    MITRE T1021 — Remote Services
+  </text>
+
+  <rect x="1110" y="460" width="320" height="90" rx="20" fill="url(#huntGrad)" filter="url(#shadow)"></rect>
+  <text x="1270" y="495" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#f5f3ff">
+    Movement Path Mapped
+  </text>
+  <text x="1270" y="522" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#ede9fe">
+    Source → target relationship established
+  </text>
+
+  <!-- Stage 4 -->
+  <rect x="80" y="595" width="300" height="90" rx="20" fill="url(#attackGrad)" filter="url(#shadow)"></rect>
+  <text x="230" y="630" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#fff">
+    4. Privilege Escalation
+  </text>
+  <text x="230" y="657" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#fee2e2">
+    Elevated execution / special privileges
+  </text>
+
+  <rect x="530" y="590" width="460" height="100" rx="20" fill="url(#detectGrad)" filter="url(#shadow)"></rect>
+  <text x="760" y="625" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#06202a">
+    Sysmon + Windows Security Logs
+  </text>
+  <text x="760" y="652" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#083344">
+    Event 4672 + process execution context
+  </text>
+  <text x="760" y="674" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#083344">
+    MITRE T1068 — Privilege Escalation
+  </text>
+
+  <rect x="1110" y="595" width="320" height="90" rx="20" fill="url(#huntGrad)" filter="url(#shadow)"></rect>
+  <text x="1270" y="630" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#f5f3ff">
+    Elevated Access Validated
+  </text>
+  <text x="1270" y="657" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#ede9fe">
+    User context and privilege level confirmed
+  </text>
+
+  <!-- Stage 5 -->
+  <rect x="80" y="730" width="300" height="90" rx="20" fill="url(#attackGrad)" filter="url(#shadow)"></rect>
+  <text x="230" y="765" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="700" fill="#fff">
+    5. Persistence
+  </text>
+  <text x="230" y="792" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#fee2e2">
+    Scheduled task / recurring execution
+  </text>
+
+  <rect x="530" y="725" width="460" height="100" rx="20" fill="url(#detectGrad)" filter="url(#shadow)"></rect>
+  <text x="760" y="760" text-anchor="middle" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#06202a">
+    Wazuh + Sysmon
+  </text>
+  <text x="760" y="787" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#083344">
+    Event 4698 + task creation evidence
+  </text>
+  <text x="760" y="809" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#083344">
+    MITRE T1053 — Scheduled Task / Job
+  </text>
+
+  <rect x="1110" y="730" width="320" height="90" rx="20" fill="url(#huntGrad)" filter="url(#shadow)"></rect>
+  <text x="1270" y="765" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#f5f3ff">
+    Persistence Confirmed
+  </text>
+  <text x="1270" y="792" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#ede9fe">
+    Mechanism and impact documented
+  </text>
+
+  <!-- Arrows row 1 -->
+  <line x1="380" y1="235" x2="530" y2="235" stroke="#e5eefc" stroke-width="3" marker-end="url(#arrowWhite)"></line>
+  <line x1="990" y1="235" x2="1110" y2="235" stroke="#e5eefc" stroke-width="3" marker-end="url(#arrowWhite)"></line>
+
+  <!-- Arrows row 2 -->
+  <line x1="380" y1="370" x2="530" y2="370" stroke="#e5eefc" stroke-width="3" marker-end="url(#arrowWhite)"></line>
+  <line x1="990" y1="370" x2="1110" y2="370" stroke="#e5eefc" stroke-width="3" marker-end="url(#arrowWhite)"></line>
+
+  <!-- Arrows row 3 -->
+  <line x1="380" y1="505" x2="530" y2="505" stroke="#e5eefc" stroke-width="3" marker-end="url(#arrowWhite)"></line>
+  <line x1="990" y1="505" x2="1110" y2="505" stroke="#e5eefc" stroke-width="3" marker-end="url(#arrowWhite)"></line>
+
+  <!-- Arrows row 4 -->
+  <line x1="380" y1="640" x2="530" y2="640" stroke="#e5eefc" stroke-width="3" marker-end="url(#arrowWhite)"></line>
+  <line x1="990" y1="640" x2="1110" y2="640" stroke="#e5eefc" stroke-width="3" marker-end="url(#arrowWhite)"></line>
+
+  <!-- Arrows row 5 -->
+  <line x1="380" y1="775" x2="530" y2="775" stroke="#e5eefc" stroke-width="3" marker-end="url(#arrowWhite)"></line>
+  <line x1="990" y1="775" x2="1110" y2="775" stroke="#e5eefc" stroke-width="3" marker-end="url(#arrowWhite)"></line>
+</svg>
