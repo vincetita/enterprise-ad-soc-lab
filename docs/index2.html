@@ -1,0 +1,1018 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enterprise AD SOC Lab Portfolio</title>
+  <meta name="description" content="Recruiter-focused SOC lab portfolio for an enterprise Active Directory environment with Wazuh, Security Onion, Sysmon, Kali, Ubuntu, and attack simulations." />
+  <style>
+    :root {
+      --bg: #07111f;
+      --bg-soft: #0d1b2e;
+      --panel: rgba(14, 24, 43, 0.92);
+      --panel-2: rgba(18, 31, 56, 0.96);
+      --text: #edf4ff;
+      --muted: #a7b8d8;
+      --accent: #2ee6a6;
+      --accent-2: #45a8ff;
+      --accent-3: #8b5cf6;
+      --danger: #ff5c7c;
+      --warning: #facc15;
+      --success: #22c55e;
+      --line: rgba(255,255,255,0.08);
+      --shadow: 0 18px 42px rgba(0, 0, 0, 0.34);
+      --radius: 20px;
+      --max: 1320px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: Inter, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(69,168,255,0.16), transparent 22%),
+        radial-gradient(circle at top right, rgba(46,230,166,0.12), transparent 22%),
+        radial-gradient(circle at bottom center, rgba(139,92,246,0.12), transparent 28%),
+        linear-gradient(180deg, #060d18 0%, #07111f 42%, #050b14 100%);
+      line-height: 1.55;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .container {
+      width: min(calc(100% - 2rem), var(--max));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(5, 10, 18, 0.84);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      min-height: 72px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+    }
+
+    .brand-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #04111f;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      box-shadow: var(--shadow);
+    }
+
+    .nav {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav a {
+      color: var(--muted);
+      font-size: 0.95rem;
+      transition: 0.2s ease;
+    }
+
+    .nav a:hover,
+    .nav a:focus { color: var(--text); }
+
+    .hero {
+      padding: 1rem 0 2rem;
+    }
+
+    .carousel {
+      position: relative;
+      overflow: hidden;
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      background: #0b1322;
+      min-height: 74vh;
+      border: 1px solid var(--line);
+    }
+
+    .slides {
+      display: flex;
+      width: 100%;
+      transition: transform 0.7s ease-in-out;
+      will-change: transform;
+    }
+
+    .slide {
+      min-width: 100%;
+      position: relative;
+      isolation: isolate;
+      min-height: 74vh;
+      display: flex;
+      align-items: end;
+      padding: clamp(1.5rem, 3vw, 3rem);
+      background-size: cover;
+      background-position: center;
+    }
+
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(5,10,18,0.95) 0%, rgba(5,10,18,0.72) 40%, rgba(5,10,18,0.22) 100%),
+        linear-gradient(0deg, rgba(5,10,18,0.98) 0%, rgba(5,10,18,0.2) 58%, rgba(5,10,18,0.04) 100%);
+      z-index: -1;
+    }
+
+    .slide-content {
+      max-width: 760px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.8rem;
+      border-radius: 999px;
+      color: #03131d;
+      background: linear-gradient(135deg, var(--accent), #85ffd7);
+      font-size: 0.84rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      margin-bottom: 1rem;
+    }
+
+    .slide h1 {
+      margin: 0 0 0.75rem;
+      font-size: clamp(2.3rem, 5vw, 4.9rem);
+      line-height: 0.94;
+      letter-spacing: -0.045em;
+    }
+
+    .slide p {
+      margin: 0 0 1.25rem;
+      color: #d7e2f6;
+      max-width: 64ch;
+      font-size: clamp(1rem, 1.25vw, 1.12rem);
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 0.9rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.92rem 1.25rem;
+      border-radius: 999px;
+      font-weight: 800;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #04111f;
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.16);
+      color: var(--text);
+    }
+
+    .slide-meta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .carousel-controls {
+      position: absolute;
+      inset: auto 1rem 1rem auto;
+      display: flex;
+      gap: 0.6rem;
+      z-index: 5;
+    }
+
+    .control,
+    .arrow {
+      border: none;
+      background: rgba(255,255,255,0.12);
+      color: white;
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      z-index: 6;
+      font-size: 1.2rem;
+    }
+
+    .arrow:hover,
+    .control:hover { background: rgba(255,255,255,0.22); }
+
+    .arrow.prev { left: 1rem; }
+    .arrow.next { right: 1rem; }
+
+    .control {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      padding: 0;
+      opacity: 0.65;
+    }
+
+    .control.active {
+      opacity: 1;
+      width: 32px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    }
+
+    section {
+      padding: 1.2rem 0 0.65rem;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: clamp(1.3rem, 2vw, 1.9rem);
+      letter-spacing: -0.03em;
+    }
+
+    .section-title span {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .card-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(21,31,55,0.96), rgba(11,18,32,0.98));
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      min-height: 258px;
+      position: relative;
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.18);
+    }
+
+    .card:hover {
+      transform: translateY(-6px) scale(1.01);
+      border-color: rgba(69,168,255,0.42);
+      box-shadow: 0 22px 40px rgba(0,0,0,0.28);
+    }
+
+    .card-visual {
+      height: 148px;
+      padding: 1rem;
+      display: flex;
+      align-items: flex-end;
+      background:
+        radial-gradient(circle at top right, rgba(46,230,166,0.28), transparent 30%),
+        linear-gradient(135deg, rgba(69,168,255,0.18), rgba(255,77,109,0.12)),
+        #0d1628;
+    }
+
+    .card-visual .tag,
+    .pill,
+    .mini-tag {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--text);
+      font-size: 0.82rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .card-body { padding: 1rem; }
+    .card h3 {
+      margin: 0 0 0.45rem;
+      font-size: 1.05rem;
+    }
+
+    .card p,
+    .panel p,
+    .feature-list li,
+    .track-list li { color: var(--muted); }
+
+    .highlights,
+    .dual-panels {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(17,24,42,0.98), rgba(10,16,29,0.96));
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 1.25rem;
+      box-shadow: var(--shadow);
+    }
+
+    .panel h3 {
+      margin-top: 0;
+      margin-bottom: 0.75rem;
+      font-size: 1.2rem;
+    }
+
+    .timeline,
+    .track-list {
+      display: grid;
+      gap: 0.95rem;
+    }
+
+    .step,
+    .track-item {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 0.9rem;
+      align-items: start;
+    }
+
+    .step-num,
+    .track-num {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      color: #05121d;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    }
+
+    .stack-list,
+    .metrics-grid,
+    .heatmap {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.8rem;
+    }
+
+    .stack-item,
+    .metric,
+    .heatmap-item {
+      padding: 0.9rem;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    .stack-item strong,
+    .metric strong,
+    .heatmap-item strong { display: block; margin-bottom: 0.2rem; }
+
+    .hero-metrics {
+      margin-top: 1rem;
+    }
+
+    .repo-box,
+    .code-box,
+    .diagram-box {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      overflow-x: auto;
+      font-family: Consolas, Monaco, monospace;
+      color: #d7e2f6;
+      font-size: 0.92rem;
+      white-space: pre;
+    }
+
+    .feature-list,
+    .link-list {
+      margin: 0;
+      padding-left: 1.1rem;
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 1rem;
+    }
+
+    .docs-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .doc-card {
+      background: linear-gradient(180deg, rgba(18, 29, 52, 0.95), rgba(11, 18, 32, 0.98));
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 1rem;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.18);
+    }
+
+    .doc-card h4 {
+      margin: 0.25rem 0 0.45rem;
+      font-size: 1rem;
+    }
+
+    .doc-card a {
+      color: #9bd7ff;
+      font-weight: 700;
+    }
+
+    .doc-card a:hover {
+      color: #d9f5ff;
+    }
+
+    .footer {
+      padding: 2rem 0 3rem;
+      color: var(--muted);
+    }
+
+    .footer-box {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 1rem 1.25rem;
+      border-radius: 20px;
+    }
+
+    @media (max-width: 1180px) {
+      .card-row,
+      .docs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .highlights,
+      .dual-panels { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 720px) {
+      .topbar-inner {
+        align-items: flex-start;
+        padding: 0.8rem 0;
+        flex-direction: column;
+      }
+      .nav { justify-content: flex-start; }
+      .carousel,
+      .slide { min-height: 80vh; }
+      .arrow {
+        width: 44px;
+        height: 44px;
+      }
+      .card-row,
+      .docs-grid,
+      .stack-list,
+      .metrics-grid,
+      .heatmap { grid-template-columns: 1fr; }
+      .slide-meta { font-size: 0.9rem; }
+      .carousel-controls { left: 1rem; right: auto; }
+      .step,
+      .track-item { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a href="#top" class="brand">
+        <span class="brand-badge">SOC</span>
+        <span>Enterprise AD SOC Lab</span>
+      </a>
+      <nav class="nav" aria-label="Primary navigation">
+        <a href="#featured">Featured</a>
+        <a href="#tracks">Tracks</a>
+        <a href="#detections">Detections</a>
+        <a href="#cases">Cases</a>
+        <a href="#repo">Repository</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container">
+        <div class="carousel" id="heroCarousel" aria-label="Portfolio highlights carousel">
+          <button class="arrow prev" aria-label="Previous slide">&#10094;</button>
+          <div class="slides">
+            <article class="slide" style="background-image: radial-gradient(circle at 80% 20%, rgba(69,168,255,0.28), transparent 20%), linear-gradient(135deg, rgba(24,39,71,0.65), rgba(3,9,20,0.82)), url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1600&q=80');">
+              <div class="slide-content">
+                <span class="eyebrow">Recruiter-Ready Cybersecurity Portfolio</span>
+                <h1>Build. Detect. Investigate. Report.</h1>
+                <div class="slide-meta">
+                  <span>Active Directory Lab</span>
+                  <span>Wazuh + Security Onion</span>
+                  <span>Structured for GitHub Pages</span>
+                </div>
+                <p>
+                  A polished SOC portfolio built around enterprise lab architecture, attack simulations,
+                  detection engineering, investigations, and MITRE ATT&amp;CK aligned reporting.
+                </p>
+                <div class="hero-actions">
+                  <a class="btn btn-primary" href="#featured">Explore Portfolio</a>
+                  <a class="btn btn-secondary" href="#repo">View Repo Structure</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="slide" style="background-image: radial-gradient(circle at 75% 20%, rgba(46,230,166,0.28), transparent 22%), linear-gradient(135deg, rgba(18,33,55,0.7), rgba(4,10,18,0.9)), url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1600&q=80');">
+              <div class="slide-content">
+                <span class="eyebrow">Detection Engineering</span>
+                <h1>From Sysmon Signals to Wazuh Correlation</h1>
+                <div class="slide-meta">
+                  <span>Windows Event IDs</span>
+                  <span>Linux auth.log</span>
+                  <span>Sigma + SIEM</span>
+                </div>
+                <p>
+                  Present detection logic, telemetry sources, and SOC workflows in a format that speaks to both hiring managers and technical reviewers.
+                </p>
+                <div class="hero-actions">
+                  <a class="btn btn-primary" href="#detections">See Detections</a>
+                  <a class="btn btn-secondary" href="#docs-links">Open Docs</a>
+                </div>
+              </div>
+            </article>
+
+            <article class="slide" style="background-image: radial-gradient(circle at 82% 18%, rgba(255,92,124,0.24), transparent 22%), linear-gradient(135deg, rgba(18,28,46,0.64), rgba(2,7,16,0.92)), url('https://images.unsplash.com/photo-1563206767-5b18f218e8de?auto=format&fit=crop&w=1600&q=80');">
+              <div class="slide-content">
+                <span class="eyebrow">Attack Simulations</span>
+                <h1>Show the Full Adversary Path</h1>
+                <div class="slide-meta">
+                  <span>Recon</span>
+                  <span>Bruteforce</span>
+                  <span>Lateral Movement</span>
+                </div>
+                <p>
+                  Turn every simulation into a case study: attack command, logs generated, alert triggered, analyst conclusion, and response recommendation.
+                </p>
+                <div class="hero-actions">
+                  <a class="btn btn-primary" href="#cases">Launch Cases</a>
+                  <a class="btn btn-secondary" href="#blueprints">Read Blueprint</a>
+                </div>
+              </div>
+            </article>
+          </div>
+          <button class="arrow next" aria-label="Next slide">&#10095;</button>
+          <div class="carousel-controls" aria-label="Slide indicators">
+            <button class="control active" aria-label="Go to slide 1"></button>
+            <button class="control" aria-label="Go to slide 2"></button>
+            <button class="control" aria-label="Go to slide 3"></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="featured">
+      <div class="container">
+        <div class="section-title">
+          <h2>Featured Portfolio Rows</h2>
+          <span>Aligned to your repository structure</span>
+        </div>
+        <div class="card-row">
+          <article class="card">
+            <div class="card-visual"><span class="tag">architecture/</span></div>
+            <div class="card-body">
+              <h3>Architecture Blueprint</h3>
+              <p>Present network zones, system relationships, and diagrams that quickly explain the lab to recruiters.</p>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card-visual"><span class="tag">detections/</span></div>
+            <div class="card-body">
+              <h3>Detection Engineering</h3>
+              <p>Highlight Wazuh rules, Sysmon coverage, Security Onion hunts, and Sigma logic in a polished track layout.</p>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card-visual"><span class="tag">infrastructure/</span></div>
+            <div class="card-body">
+              <h3>Lab Build Journey</h3>
+              <p>Walk through VM preparation, networking, Windows Server, Ubuntu, Kali, Wazuh, and Security Onion deployment.</p>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card-visual"><span class="tag">investigations/</span></div>
+            <div class="card-body">
+              <h3>SOC Cases</h3>
+              <p>Turn SSH bruteforce, Windows logons, and PowerShell abuse into real analyst stories with evidence and recommendations.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="tracks">
+      <div class="container">
+        <div class="section-title">
+          <h2>Detection &amp; Simulation Tracks</h2>
+          <span>Purpose-built for SOC and Blue Team roles</span>
+        </div>
+        <div class="card-row">
+          <article class="card">
+            <div class="card-visual"><span class="tag">sigma/windows_failed_logon.yml</span></div>
+            <div class="card-body">
+              <h3>Windows Failed Logon Rule</h3>
+              <p>Use Sigma as a featured item and connect it to Event ID 4625, Wazuh alerts, and bruteforce investigations.</p>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card-visual"><span class="tag">simulations/01-reconnaissance.md</span></div>
+            <div class="card-body">
+              <h3>Reconnaissance Phase</h3>
+              <p>Explain how attacker discovery actions create network indicators long before privilege escalation occurs.</p>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card-visual"><span class="tag">simulations/02-bruteforce.md</span></div>
+            <div class="card-body">
+              <h3>Bruteforce Sequence</h3>
+              <p>Map credential attacks to Ubuntu auth logs, Windows Event Logs, Wazuh detections, and Security Onion traffic.</p>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card-visual"><span class="tag">reports/02-mitre-coverage-matrix.md</span></div>
+            <div class="card-body">
+              <h3>MITRE Coverage Matrix</h3>
+              <p>Translate technical detections into ATT&amp;CK-aligned evidence of SOC maturity and structured security thinking.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="blueprints">
+      <div class="container">
+        <div class="highlights">
+          <div class="panel">
+            <h3>Repository Walkthrough Timeline</h3>
+            <div class="timeline">
+              <div class="step">
+                <div class="step-num">1</div>
+                <div>
+                  <strong>Scope the Lab</strong>
+                  <div>Start with project scope, inventory, and documentation roadmap so the lab tells a clear enterprise story.</div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num">2</div>
+                <div>
+                  <strong>Map the Environment</strong>
+                  <div>Use architecture markdown and diagrams to explain trust boundaries, zones, and host relationships.</div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num">3</div>
+                <div>
+                  <strong>Show the Build Path</strong>
+                  <div>Document VM prep, networking, AD, Ubuntu, Kali, Wazuh, Security Onion, and optional Docker services.</div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num">4</div>
+                <div>
+                  <strong>Prove Detection Value</strong>
+                  <div>Connect simulations, rules, hunts, cases, and reporting so the portfolio reads like a real SOC workflow.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <h3>Core Stack</h3>
+            <div class="stack-list">
+              <div class="stack-item"><strong>Windows Server 2025</strong><span>AD DS, DNS, DHCP, enterprise identity services</span></div>
+              <div class="stack-item"><strong>Windows 11 Client</strong><span>User activity, logons, endpoint telemetry</span></div>
+              <div class="stack-item"><strong>Ubuntu + Docker</strong><span>SSH target, services, Linux logging, container options</span></div>
+              <div class="stack-item"><strong>Kali Linux</strong><span>Adversary simulation and validation testing</span></div>
+              <div class="stack-item"><strong>Security Onion</strong><span>Suricata, Zeek, hunts, network evidence</span></div>
+              <div class="stack-item"><strong>Wazuh</strong><span>SIEM alerts, correlation, investigations</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="detections">
+      <div class="container">
+        <div class="section-title">
+          <h2>Detection Strategy</h2>
+          <span>Endpoint + SIEM + Network visibility</span>
+        </div>
+        <div class="dual-panels">
+          <div class="panel">
+            <h3>Detection Layers</h3>
+            <ul class="feature-list">
+              <li><strong>Endpoint:</strong> Windows Event Logs, Sysmon, Linux auth.log</li>
+              <li><strong>SIEM:</strong> Wazuh agents, rule tuning, alert triage, correlation</li>
+              <li><strong>Network:</strong> Security Onion using Suricata and Zeek</li>
+              <li><strong>Threat Modeling:</strong> MITRE ATT&amp;CK coverage across attack stages</li>
+            </ul>
+            <div class="code-box">Attack  →  Logs  →  Detection  →  Correlation  →  Investigation  →  Reporting</div>
+          </div>
+          <div class="panel">
+            <h3>Detection Coverage Snapshot</h3>
+            <div class="heatmap">
+              <div class="heatmap-item"><strong>T1046</strong><span>Recon / Nmap</span></div>
+              <div class="heatmap-item"><strong>T1110</strong><span>Bruteforce</span></div>
+              <div class="heatmap-item"><strong>T1021</strong><span>Lateral Movement</span></div>
+              <div class="heatmap-item"><strong>T1059</strong><span>PowerShell</span></div>
+              <div class="heatmap-item"><strong>T1053</strong><span>Persistence</span></div>
+              <div class="heatmap-item"><strong>T1068</strong><span>Privilege Escalation</span></div>
+            </div>
+            <div class="button-row">
+              <a class="btn btn-secondary" href="#docs-links">Open Detection Docs</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="cases">
+      <div class="container">
+        <div class="section-title">
+          <h2>Case Investigation Tracks</h2>
+          <span>Tell the analyst story, not just the tool story</span>
+        </div>
+        <div class="panel">
+          <div class="track-list">
+            <div class="track-item">
+              <div class="track-num">01</div>
+              <div>
+                <strong>SSH Bruteforce Against Ubuntu</strong>
+                <div>Hydra from Kali → auth.log failures → Wazuh alert → Security Onion network confirmation → analyst conclusion.</div>
+              </div>
+            </div>
+            <div class="track-item">
+              <div class="track-num">02</div>
+              <div>
+                <strong>Windows Failed Logon Case</strong>
+                <div>Event ID 4625 → repeated authentication failures → source host identified → internal attack path reviewed.</div>
+              </div>
+            </div>
+            <div class="track-item">
+              <div class="track-num">03</div>
+              <div>
+                <strong>Suspicious PowerShell Execution</strong>
+                <div>Sysmon Event ID 1 → encoded or bypassed PowerShell → Wazuh correlation → post-exploitation investigation.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="repo">
+      <div class="container">
+        <div class="section-title">
+          <h2>Repository Structure</h2>
+          <span>Preserved to match your requested tree</span>
+        </div>
+        <div class="panel">
+          <p style="margin-top:0;color:var(--muted)">
+            The homepage is designed to live in <strong>docs/index.html</strong> for GitHub Pages while keeping the rest of the repository clean for technical review.
+          </p>
+          <div class="repo-box">.
+.gitignore
+README.md
+
+architecture/
+  00-overview.md
+  01-network-zones.md
+  02-system-relationships.md
+  diagrams/
+    attack_flow.svg
+    enterprise_soc_architecture.svg
+    network_topology.svg
+
+detections/
+  00-detection-strategy.md
+  01-wazuh-rules.md
+  02-sysmon.md
+  03-security-onion-hunts.md
+  sigma/
+    windows_failed_logon.yml
+
+docs/
+  00-project-scope.md
+  01-lab-inventory.md
+  02-documentation-roadmap.md
+  03-soc-analyst-interview-cheat-sheet.md
+  04-linkedin-showcase-post.md
+  05-screenshot-and-execution-checklist.md
+  06-soc-analyst-walkthrough.md
+  index.html
+  screenshots/
+
+infrastructure/
+  00-build-order.md
+  01-vm-preparation.md
+  02-networking.md
+  03-windows-server-2025.md
+  04-win11client.md
+  05-ubuntu.md
+  06-kali.md
+  07-security-onion.md
+  08-wazuh.md
+  09-docker.md
+  scripts/
+
+investigations/
+  00-investigation-method.md
+  01-ssh-bruteforce-case.md
+  02-windows-logon-case.md
+  03-powershell-case.md
+
+reports/
+  00-weekly-soc-report-template.md
+  01-incident-report-template.md
+  02-mitre-coverage-matrix.md
+
+simulations/
+  00-simulation-index.md
+  01-reconnaissance.md
+  02-bruteforce.md
+  03-lateral-movement.md
+  04-privilege-escalation.md
+  05-persistence.md
+  06-linux-attacks.md</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="docs-links">
+      <div class="container">
+        <div class="section-title">
+          <h2>Suggested GitHub Documentation Links</h2>
+          <span>Replace <code>YOUR-USERNAME</code> if needed</span>
+        </div>
+        <div class="docs-grid">
+          <div class="doc-card">
+            <span class="mini-tag">docs/</span>
+            <h4>Project Scope</h4>
+            <p>Mission, inventory, roadmap, interview notes, and LinkedIn showcase content.</p>
+            <a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/docs/00-project-scope.md">Open document</a>
+          </div>
+          <div class="doc-card">
+            <span class="mini-tag">architecture/</span>
+            <h4>Architecture Overview</h4>
+            <p>Explain network zones, system relationships, and diagrams for reviewers.</p>
+            <a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/architecture/00-overview.md">Open document</a>
+          </div>
+          <div class="doc-card">
+            <span class="mini-tag">infrastructure/</span>
+            <h4>Build Documentation</h4>
+            <p>VM preparation, networking, AD, Ubuntu, Kali, Wazuh, and Security Onion deployment.</p>
+            <a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/infrastructure/00-build-order.md">Open document</a>
+          </div>
+          <div class="doc-card">
+            <span class="mini-tag">detections/</span>
+            <h4>Detection Strategy</h4>
+            <p>Wazuh rules, Sysmon signals, Security Onion hunts, and Sigma-based mapping.</p>
+            <a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/detections/00-detection-strategy.md">Open document</a>
+          </div>
+          <div class="doc-card">
+            <span class="mini-tag">simulations/</span>
+            <h4>Attack Simulations</h4>
+            <p>Recon, bruteforce, lateral movement, privilege escalation, persistence, and Linux-focused attacks.</p>
+            <a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/simulations/00-simulation-index.md">Open document</a>
+          </div>
+          <div class="doc-card">
+            <span class="mini-tag">investigations/</span>
+            <h4>Case Investigations</h4>
+            <p>Case files that show analyst reasoning, timeline reconstruction, and recommendations.</p>
+            <a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/investigations/00-investigation-method.md">Open document</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-box">
+        Upgraded from the current single-file homepage structure in your uploaded <code>index.html</code> and expanded into a more recruiter-facing, repo-aware portfolio layout. Replace GitHub placeholder links, add your screenshots, and publish via GitHub Pages. Based on your uploaded file structure and content direction fileciteturn0file0
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const carousel = document.getElementById('heroCarousel');
+      const slidesWrap = carousel.querySelector('.slides');
+      const slides = Array.from(carousel.querySelectorAll('.slide'));
+      const prevBtn = carousel.querySelector('.prev');
+      const nextBtn = carousel.querySelector('.next');
+      const dots = Array.from(carousel.querySelectorAll('.control'));
+      let index = 0;
+      let intervalId = null;
+      const delay = 3000;
+
+      function updateCarousel() {
+        slidesWrap.style.transform = `translateX(-${index * 100}%)`;
+        dots.forEach((dot, i) => {
+          dot.classList.toggle('active', i === index);
+          dot.setAttribute('aria-current', i === index ? 'true' : 'false');
+        });
+      }
+
+      function goToSlide(newIndex) {
+        index = (newIndex + slides.length) % slides.length;
+        updateCarousel();
+      }
+
+      function nextSlide() { goToSlide(index + 1); }
+      function prevSlide() { goToSlide(index - 1); }
+
+      function startAutoPlay() {
+        stopAutoPlay();
+        intervalId = setInterval(nextSlide, delay);
+      }
+
+      function stopAutoPlay() {
+        if (intervalId) {
+          clearInterval(intervalId);
+          intervalId = null;
+        }
+      }
+
+      prevBtn.addEventListener('click', () => {
+        prevSlide();
+        startAutoPlay();
+      });
+
+      nextBtn.addEventListener('click', () => {
+        nextSlide();
+        startAutoPlay();
+      });
+
+      dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => {
+          goToSlide(i);
+          startAutoPlay();
+        });
+      });
+
+      carousel.addEventListener('mouseenter', stopAutoPlay);
+      carousel.addEventListener('mouseleave', startAutoPlay);
+      carousel.addEventListener('focusin', stopAutoPlay);
+      carousel.addEventListener('focusout', startAutoPlay);
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) stopAutoPlay();
+        else startAutoPlay();
+      });
+
+      updateCarousel();
+      startAutoPlay();
+    })();
+  </script>
+</body>
+</html>
