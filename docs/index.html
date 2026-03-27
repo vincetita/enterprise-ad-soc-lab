@@ -1,10 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Enterprise AD SOC Lab Portfolio – Phase 2 Dashboard</title>
-  <meta name="description" content="Interactive SOC portfolio with clickable attack scenarios, MITRE ATT&CK heatmap, modal investigation reports, GitHub integration, and a simulated SIEM dashboard." />
+  <title>Enterprise AD SOC Lab Portfolio</title>
+  <meta name="description" content="Recruiter-focused SOC lab portfolio for an enterprise Active Directory environment with Wazuh, Security Onion, Sysmon, Kali, Ubuntu, and attack simulations." />
   <style>
     :root {
       --bg: #07111f;
@@ -20,11 +21,9 @@
       --warning: #facc15;
       --success: #22c55e;
       --line: rgba(255,255,255,0.08);
-      --line-2: rgba(255,255,255,0.16);
       --shadow: 0 18px 42px rgba(0, 0, 0, 0.34);
       --radius: 20px;
-      --max: 1340px;
-      --code: #d7e2f6;
+      --max: 1320px;
     }
 
     * { box-sizing: border-box; }
@@ -42,7 +41,6 @@
     }
 
     a { color: inherit; text-decoration: none; }
-    button { font: inherit; }
     img { max-width: 100%; display: block; }
 
     .container {
@@ -54,7 +52,7 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(5, 10, 18, 0.86);
+      background: rgba(5, 10, 18, 0.84);
       backdrop-filter: blur(14px);
       border-bottom: 1px solid var(--line);
     }
@@ -104,7 +102,7 @@
     .nav a:focus { color: var(--text); }
 
     .hero {
-      padding: 1rem 0 1.75rem;
+      padding: 1rem 0 2rem;
     }
 
     .carousel {
@@ -146,7 +144,9 @@
       z-index: -1;
     }
 
-    .slide-content { max-width: 780px; }
+    .slide-content {
+      max-width: 760px;
+    }
 
     .eyebrow {
       display: inline-flex;
@@ -205,10 +205,6 @@
       border-color: rgba(255,255,255,0.16);
       color: var(--text);
     }
-    .btn-danger {
-      background: linear-gradient(135deg, var(--danger), #ff9ab1);
-      color: #1f0710;
-    }
 
     .slide-meta {
       display: flex;
@@ -227,7 +223,8 @@
       z-index: 5;
     }
 
-    .control, .arrow {
+    .control,
+    .arrow {
       border: none;
       background: rgba(255,255,255,0.12);
       color: white;
@@ -247,7 +244,9 @@
       font-size: 1.2rem;
     }
 
-    .arrow:hover, .control:hover { background: rgba(255,255,255,0.22); }
+    .arrow:hover,
+    .control:hover { background: rgba(255,255,255,0.22); }
+
     .arrow.prev { left: 1rem; }
     .arrow.next { right: 1rem; }
 
@@ -266,11 +265,13 @@
       background: linear-gradient(135deg, var(--accent), var(--accent-2));
     }
 
-    section { padding: 1.2rem 0 0.7rem; }
+    section {
+      padding: 1.2rem 0 0.65rem;
+    }
 
     .section-title {
       display: flex;
-      align-items: end;
+      align-items: center;
       justify-content: space-between;
       gap: 1rem;
       margin-bottom: 1rem;
@@ -287,39 +288,27 @@
       font-size: 0.95rem;
     }
 
-    .card-row,
-    .docs-grid,
-    .attack-grid,
-    .heatmap-grid {
+    .card-row {
       display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 1rem;
     }
 
-    .card-row { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-    .docs-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .attack-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-    .heatmap-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-
-    .card,
-    .doc-card,
-    .attack-card,
-    .heatmap-card,
-    .panel {
+    .card {
       background: linear-gradient(180deg, rgba(21,31,55,0.96), rgba(11,18,32,0.98));
       border: 1px solid var(--line);
-      border-radius: 20px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      min-height: 258px;
+      position: relative;
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
       box-shadow: 0 14px 30px rgba(0,0,0,0.18);
     }
 
-    .card, .attack-card { overflow: hidden; min-height: 258px; }
-    .card:hover, .attack-card:hover, .doc-card:hover, .heatmap-card:hover {
+    .card:hover {
       transform: translateY(-6px) scale(1.01);
       border-color: rgba(69,168,255,0.42);
       box-shadow: 0 22px 40px rgba(0,0,0,0.28);
-    }
-
-    .card, .attack-card, .doc-card, .heatmap-card {
-      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
     }
 
     .card-visual {
@@ -333,9 +322,9 @@
         #0d1628;
     }
 
-    .tag,
-    .mini-tag,
-    .status-pill {
+    .card-visual .tag,
+    .pill,
+    .mini-tag {
       background: rgba(255,255,255,0.12);
       border: 1px solid rgba(255,255,255,0.12);
       color: var(--text);
@@ -343,43 +332,57 @@
       padding: 0.35rem 0.65rem;
       border-radius: 999px;
       font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
     }
 
-    .status-pill.playing { background: rgba(46,230,166,0.18); border-color: rgba(46,230,166,0.3); }
-    .status-pill.paused { background: rgba(250,204,21,0.14); border-color: rgba(250,204,21,0.3); }
-
-    .card-body, .attack-body, .doc-card, .heatmap-card, .panel { padding: 1rem; }
-    .card h3, .attack-card h3, .doc-card h4, .heatmap-card h4 {
+    .card-body { padding: 1rem; }
+    .card h3 {
       margin: 0 0 0.45rem;
       font-size: 1.05rem;
     }
 
-    .card p, .panel p, .feature-list li, .track-list li, .doc-card p, .attack-card p, .heatmap-card p {
-      color: var(--muted);
-    }
+    .card p,
+    .panel p,
+    .feature-list li,
+    .track-list li { color: var(--muted); }
 
-    .highlights, .dual-panels {
+    .highlights,
+    .dual-panels {
       display: grid;
       grid-template-columns: 1.3fr 1fr;
       gap: 1rem;
       margin-top: 1rem;
     }
 
-    .panel h3 { margin-top: 0; margin-bottom: 0.75rem; font-size: 1.2rem; }
+    .panel {
+      background: linear-gradient(180deg, rgba(17,24,42,0.98), rgba(10,16,29,0.96));
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 1.25rem;
+      box-shadow: var(--shadow);
+    }
 
-    .timeline, .track-list, .activity-feed { display: grid; gap: 0.95rem; }
+    .panel h3 {
+      margin-top: 0;
+      margin-bottom: 0.75rem;
+      font-size: 1.2rem;
+    }
 
-    .step, .track-item {
+    .timeline,
+    .track-list {
+      display: grid;
+      gap: 0.95rem;
+    }
+
+    .step,
+    .track-item {
       display: grid;
       grid-template-columns: 48px 1fr;
       gap: 0.9rem;
       align-items: start;
     }
 
-    .step-num, .track-num {
+    .step-num,
+    .track-num {
       width: 48px;
       height: 48px;
       border-radius: 14px;
@@ -390,22 +393,34 @@
       background: linear-gradient(135deg, var(--accent), var(--accent-2));
     }
 
-    .stack-list, .metrics-grid, .heatmap-mini {
+    .stack-list,
+    .metrics-grid,
+    .heatmap {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 0.8rem;
     }
 
-    .stack-item, .metric, .heatmap-item {
+    .stack-item,
+    .metric,
+    .heatmap-item {
       padding: 0.9rem;
       border-radius: 16px;
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.07);
     }
 
-    .stack-item strong, .metric strong, .heatmap-item strong { display: block; margin-bottom: 0.2rem; }
+    .stack-item strong,
+    .metric strong,
+    .heatmap-item strong { display: block; margin-bottom: 0.2rem; }
 
-    .repo-box, .code-box, .siem-box {
+    .hero-metrics {
+      margin-top: 1rem;
+    }
+
+    .repo-box,
+    .code-box,
+    .diagram-box {
       margin-top: 1rem;
       padding: 1rem;
       border-radius: 20px;
@@ -413,12 +428,13 @@
       border: 1px solid rgba(255,255,255,0.08);
       overflow-x: auto;
       font-family: Consolas, Monaco, monospace;
-      color: var(--code);
+      color: #d7e2f6;
       font-size: 0.92rem;
-      white-space: pre-wrap;
+      white-space: pre;
     }
 
-    .feature-list, .link-list {
+    .feature-list,
+    .link-list {
       margin: 0;
       padding-left: 1.1rem;
       display: grid;
@@ -432,245 +448,32 @@
       margin-top: 1rem;
     }
 
+    .docs-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .doc-card {
+      background: linear-gradient(180deg, rgba(18, 29, 52, 0.95), rgba(11, 18, 32, 0.98));
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 1rem;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.18);
+    }
+
+    .doc-card h4 {
+      margin: 0.25rem 0 0.45rem;
+      font-size: 1rem;
+    }
+
     .doc-card a {
       color: #9bd7ff;
       font-weight: 700;
     }
-    .doc-card a:hover { color: #d9f5ff; }
 
-    .attack-card {
-      cursor: pointer;
-      min-height: 300px;
-      position: relative;
-    }
-
-    .attack-card.active-card {
-      border-color: rgba(46,230,166,0.44);
-      box-shadow: 0 0 0 1px rgba(46,230,166,0.2), 0 22px 40px rgba(0,0,0,0.28);
-    }
-
-
-    .attack-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 0.75rem;
-      margin-bottom: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .attack-controls {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 0.9rem;
-      flex-wrap: wrap;
-    }
-
-    .mini-btn {
-      padding: 0.6rem 0.85rem;
-      border-radius: 999px;
-      border: 1px solid var(--line-2);
-      color: var(--text);
-      background: rgba(255,255,255,0.06);
-      cursor: pointer;
-      font-weight: 700;
-    }
-
-    .mini-btn:hover { background: rgba(255,255,255,0.12); }
-    .mini-btn.active { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #05121d; border-color: transparent; }
-
-    .fake-siem-wrap {
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 1rem;
-      margin-top: 0.5rem;
-    }
-
-    .siem-shell {
-      border-radius: 24px;
-      overflow: hidden;
-      border: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(10,16,29,0.98), rgba(6,10,19,0.98));
-      box-shadow: var(--shadow);
-    }
-
-    .siem-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.75rem;
-      padding: 0.85rem 1rem;
-      border-bottom: 1px solid var(--line);
-      background: rgba(255,255,255,0.03);
-    }
-
-    .siem-title {
-      font-weight: 800;
-    }
-
-    .siem-actions {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .siem-action {
-      padding: 0.45rem 0.65rem;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid var(--line);
-      color: var(--muted);
-      font-size: 0.85rem;
-    }
-
-    .siem-main {
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      min-height: 520px;
-    }
-
-    .siem-logpane {
-      border-right: 1px solid var(--line);
-      padding: 0.85rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .siem-search {
-      padding: 0.8rem 0.9rem;
-      border-radius: 14px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--line);
-      color: var(--muted);
-      font-family: Consolas, Monaco, monospace;
-      font-size: 0.9rem;
-    }
-
-    .activity-feed {
-      flex: 1;
-      overflow: auto;
-      padding-right: 0.25rem;
-      max-height: 440px;
-    }
-
-    .event-item {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--line);
-      border-left: 4px solid var(--accent-2);
-      border-radius: 16px;
-      padding: 0.85rem;
-    }
-
-    .event-item.high { border-left-color: var(--danger); }
-    .event-item.medium { border-left-color: var(--warning); }
-    .event-item.low { border-left-color: var(--accent); }
-
-    .event-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 0.75rem;
-      align-items: start;
-      flex-wrap: wrap;
-    }
-
-    .event-title { font-weight: 800; }
-    .event-meta {
-      color: var(--muted);
-      font-size: 0.87rem;
-      display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-      margin-top: 0.35rem;
-    }
-
-    .event-desc {
-      margin-top: 0.55rem;
-      color: #d7e2f6;
-      font-size: 0.94rem;
-    }
-
-    .event-badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.45rem;
-      margin-top: 0.6rem;
-    }
-
-    .siem-side {
-      padding: 0.85rem;
-      display: grid;
-      gap: 0.85rem;
-      align-content: start;
-    }
-
-    .widget {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 0.9rem;
-    }
-
-    .widget h4 {
-      margin: 0 0 0.6rem;
-      font-size: 0.98rem;
-    }
-
-    .bar-list {
-      display: grid;
-      gap: 0.55rem;
-    }
-
-    .bar-row { display: grid; gap: 0.25rem; }
-    .bar-row span {
-      display: flex;
-      justify-content: space-between;
-      color: var(--muted);
-      font-size: 0.86rem;
-    }
-    .bar {
-      height: 9px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      overflow: hidden;
-    }
-    .bar > i {
-      display: block;
-      height: 100%;
-      border-radius: inherit;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-    }
-
-    .heatmap-card {
-      padding: 1rem;
-      cursor: pointer;
-    }
-
-    .heatmap-card.active {
-      border-color: rgba(46,230,166,0.44);
-      box-shadow: 0 0 0 1px rgba(46,230,166,0.2), 0 22px 40px rgba(0,0,0,0.28);
-    }
-
-    .heatmap-code {
-      display: inline-block;
-      font-weight: 900;
-      font-size: 1.18rem;
-      color: var(--accent);
-      margin-bottom: 0.25rem;
-    }
-
-    .heatmap-severity {
-      margin-top: 0.8rem;
-      font-size: 0.84rem;
-      color: var(--muted);
-    }
-
-    .heatmap-details {
-      margin-top: 1rem;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 1rem;
+    .doc-card a:hover {
+      color: #d9f5ff;
     }
 
     .footer {
@@ -685,104 +488,11 @@
       border-radius: 20px;
     }
 
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(2, 6, 12, 0.7);
-      backdrop-filter: blur(8px);
-      display: none;
-      place-items: center;
-      z-index: 120;
-      padding: 1rem;
-    }
-
-    .modal-backdrop.open { display: grid; }
-
-    .modal {
-      width: min(980px, 100%);
-      max-height: 90vh;
-      overflow: auto;
-      background: linear-gradient(180deg, rgba(15,24,43,0.98), rgba(9,15,28,0.98));
-      border: 1px solid var(--line-2);
-      border-radius: 24px;
-      box-shadow: 0 30px 80px rgba(0,0,0,0.45);
-    }
-
-    .modal-head {
-      position: sticky;
-      top: 0;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      padding: 1rem 1.2rem;
-      border-bottom: 1px solid var(--line);
-      background: rgba(9,15,28,0.94);
-      backdrop-filter: blur(10px);
-    }
-
-    .modal-head h3 { margin: 0; }
-    .modal-close {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      border: 1px solid var(--line-2);
-      background: rgba(255,255,255,0.06);
-      color: var(--text);
-      cursor: pointer;
-      font-size: 1.1rem;
-    }
-
-    .modal-body {
-      padding: 1.15rem;
-      display: grid;
-      gap: 1rem;
-    }
-
-    .modal-grid {
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 1rem;
-    }
-
-    .report-box {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 1rem;
-    }
-
-    .report-box h4 { margin-top: 0; }
-    .report-list {
-      margin: 0;
-      padding-left: 1.15rem;
-      display: grid;
-      gap: 0.4rem;
-    }
-
-    .report-kv {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0.75rem;
-    }
-
-    .report-kv .widget {
-      min-height: 100%;
-    }
-
-    code {
-      background: rgba(255,255,255,0.06);
-      padding: 0.14rem 0.4rem;
-      border-radius: 8px;
-      color: var(--code);
-    }
-
     @media (max-width: 1180px) {
-      .card-row, .docs-grid, .attack-grid, .heatmap-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .highlights, .dual-panels, .fake-siem-wrap, .modal-grid { grid-template-columns: 1fr; }
-      .siem-main { grid-template-columns: 1fr; }
-      .siem-logpane { border-right: none; border-bottom: 1px solid var(--line); }
+      .card-row,
+      .docs-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .highlights,
+      .dual-panels { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 720px) {
@@ -792,13 +502,21 @@
         flex-direction: column;
       }
       .nav { justify-content: flex-start; }
-      .carousel, .slide { min-height: 80vh; }
-      .arrow { width: 44px; height: 44px; }
-      .card-row, .docs-grid, .stack-list, .metrics-grid, .heatmap-mini, .attack-grid, .heatmap-grid { grid-template-columns: 1fr; }
+      .carousel,
+      .slide { min-height: 80vh; }
+      .arrow {
+        width: 44px;
+        height: 44px;
+      }
+      .card-row,
+      .docs-grid,
+      .stack-list,
+      .metrics-grid,
+      .heatmap { grid-template-columns: 1fr; }
       .slide-meta { font-size: 0.9rem; }
       .carousel-controls { left: 1rem; right: auto; }
-      .step, .track-item { grid-template-columns: 1fr; }
-      .report-kv { grid-template-columns: 1fr; }
+      .step,
+      .track-item { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -811,10 +529,10 @@
       </a>
       <nav class="nav" aria-label="Primary navigation">
         <a href="#featured">Featured</a>
-        <a href="#dashboard">Dashboard</a>
-        <a href="#scenarios">Scenarios</a>
-        <a href="#mitre">MITRE</a>
-        <a href="#docs-links">Docs</a>
+        <a href="#tracks">Tracks</a>
+        <a href="#detections">Detections</a>
+        <a href="#cases">Cases</a>
+        <a href="#repo">Repository</a>
       </nav>
     </div>
   </header>
@@ -827,58 +545,58 @@
           <div class="slides">
             <article class="slide" style="background-image: radial-gradient(circle at 80% 20%, rgba(69,168,255,0.28), transparent 20%), linear-gradient(135deg, rgba(24,39,71,0.65), rgba(3,9,20,0.82)), url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1600&q=80');">
               <div class="slide-content">
-                <span class="eyebrow">Phase 2 Interactive Dashboard</span>
-                <h1>Clickable SOC Scenarios with Investigation Intelligence</h1>
+                <span class="eyebrow">Recruiter-Ready Cybersecurity Portfolio</span>
+                <h1>Build. Detect. Investigate. Report.</h1>
                 <div class="slide-meta">
-                  <span>Attack Play/Pause</span>
-                  <span>Interactive MITRE</span>
-                  <span>Modal Case Reports</span>
+                  <span>Active Directory Lab</span>
+                  <span>Wazuh + Security Onion</span>
+                  <span>Structured for GitHub Pages</span>
                 </div>
                 <p>
-                  This upgraded version keeps your current portfolio structure and adds a simulated SIEM experience,
-                  clickable attack scenarios, modal investigation reports, GitHub document linking, and interactive ATT&amp;CK exploration.
+                  A polished SOC portfolio built around enterprise lab architecture, attack simulations,
+                  detection engineering, investigations, and MITRE ATT&amp;CK aligned reporting.
                 </p>
                 <div class="hero-actions">
-                  <a class="btn btn-primary" href="#dashboard">Launch Dashboard</a>
-                  <a class="btn btn-secondary" href="#scenarios">Open Scenarios</a>
+                  <a class="btn btn-primary" href="#featured">Explore Portfolio</a>
+                  <a class="btn btn-secondary" href="#repo">View Repo Structure</a>
                 </div>
               </div>
             </article>
 
             <article class="slide" style="background-image: radial-gradient(circle at 75% 20%, rgba(46,230,166,0.28), transparent 22%), linear-gradient(135deg, rgba(18,33,55,0.7), rgba(4,10,18,0.9)), url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1600&q=80');">
               <div class="slide-content">
-                <span class="eyebrow">Fake SIEM UI</span>
-                <h1>Show the Recruiter What the SOC Actually Sees</h1>
+                <span class="eyebrow">Detection Engineering</span>
+                <h1>From Sysmon Signals to Wazuh Correlation</h1>
                 <div class="slide-meta">
-                  <span>Alert Stream</span>
-                  <span>Severity Filters</span>
-                  <span>Analyst Context</span>
+                  <span>Windows Event IDs</span>
+                  <span>Linux auth.log</span>
+                  <span>Sigma + SIEM</span>
                 </div>
                 <p>
-                  The dashboard below presents attack telemetry like a live console: alert feed, rule groups, severity, MITRE mappings, and analyst next actions.
+                  Present detection logic, telemetry sources, and SOC workflows in a format that speaks to both hiring managers and technical reviewers.
                 </p>
                 <div class="hero-actions">
-                  <a class="btn btn-primary" href="#dashboard">Open SIEM View</a>
-                  <a class="btn btn-secondary" href="#cases">Read Cases</a>
+                  <a class="btn btn-primary" href="#detections">See Detections</a>
+                  <a class="btn btn-secondary" href="#docs-links">Open Docs</a>
                 </div>
               </div>
             </article>
 
             <article class="slide" style="background-image: radial-gradient(circle at 82% 18%, rgba(255,92,124,0.24), transparent 22%), linear-gradient(135deg, rgba(18,28,46,0.64), rgba(2,7,16,0.92)), url('https://images.unsplash.com/photo-1563206767-5b18f218e8de?auto=format&fit=crop&w=1600&q=80');">
               <div class="slide-content">
-                <span class="eyebrow">GitHub-Aware Navigation</span>
-                <h1>Every Section Connects Back to Your Repository</h1>
+                <span class="eyebrow">Attack Simulations</span>
+                <h1>Show the Full Adversary Path</h1>
                 <div class="slide-meta">
-                  <span>Repo Structure</span>
-                  <span>Auto-Link Cards</span>
-                  <span>Interview-Friendly</span>
+                  <span>Recon</span>
+                  <span>Bruteforce</span>
+                  <span>Lateral Movement</span>
                 </div>
                 <p>
-                  Your portfolio now behaves like a guided walkthrough into the repo: simulations, detections, architecture, investigations, and reporting all flow together.
+                  Turn every simulation into a case study: attack command, logs generated, alert triggered, analyst conclusion, and response recommendation.
                 </p>
                 <div class="hero-actions">
-                  <a class="btn btn-primary" href="#docs-links">Open GitHub Links</a>
-                  <a class="btn btn-secondary" href="#mitre">Explore MITRE</a>
+                  <a class="btn btn-primary" href="#cases">Launch Cases</a>
+                  <a class="btn btn-secondary" href="#blueprints">Read Blueprint</a>
                 </div>
               </div>
             </article>
@@ -897,136 +615,162 @@
       <div class="container">
         <div class="section-title">
           <h2>Featured Portfolio Rows</h2>
-          <span>Still aligned to your current structure</span>
+          <span>Aligned to your repository structure</span>
         </div>
         <div class="card-row">
           <article class="card">
             <div class="card-visual"><span class="tag">architecture/</span></div>
             <div class="card-body">
               <h3>Architecture Blueprint</h3>
-              <p>Preserve the original architecture-first story while adding interactive case navigation and a fake SIEM dashboard.</p>
+              <p>Present network zones, system relationships, and diagrams that quickly explain the lab to recruiters.</p>
             </div>
           </article>
           <article class="card">
             <div class="card-visual"><span class="tag">detections/</span></div>
             <div class="card-body">
               <h3>Detection Engineering</h3>
-              <p>Wazuh rules, Sysmon coverage, Security Onion hunts, Sigma mapping, and ATT&amp;CK-aligned visual exploration.</p>
+              <p>Highlight Wazuh rules, Sysmon coverage, Security Onion hunts, and Sigma logic in a polished track layout.</p>
             </div>
           </article>
           <article class="card">
-            <div class="card-visual"><span class="tag">simulations/</span></div>
+            <div class="card-visual"><span class="tag">infrastructure/</span></div>
             <div class="card-body">
-              <h3>Attack Scenarios</h3>
-              <p>Play and pause attack stories to demonstrate recon, bruteforce, lateral movement, PowerShell abuse, and persistence.</p>
+              <h3>Lab Build Journey</h3>
+              <p>Walk through VM preparation, networking, Windows Server, Ubuntu, Kali, Wazuh, and Security Onion deployment.</p>
             </div>
           </article>
           <article class="card">
             <div class="card-visual"><span class="tag">investigations/</span></div>
             <div class="card-body">
-              <h3>Analyst Reports</h3>
-              <p>Modal case reports transform your markdown investigations into portfolio-ready reviewable incidents.</p>
+              <h3>SOC Cases</h3>
+              <p>Turn SSH bruteforce, Windows logons, and PowerShell abuse into real analyst stories with evidence and recommendations.</p>
             </div>
           </article>
         </div>
       </div>
     </section>
 
-    <section id="dashboard">
+    <section id="tracks">
       <div class="container">
         <div class="section-title">
-          <h2>Interactive SIEM Dashboard</h2>
-          <span>Fake Wazuh/Splunk-style UI for recruiter impact</span>
+          <h2>Detection &amp; Simulation Tracks</h2>
+          <span>Purpose-built for SOC and Blue Team roles</span>
         </div>
-        <div class="fake-siem-wrap">
-          <div class="siem-shell">
-            <div class="siem-top">
-              <div>
-                <div class="siem-title">SOC Console / Event Stream</div>
-                <div style="color:var(--muted);font-size:.88rem">Interactive feed driven by your attack scenarios</div>
-              </div>
-              <div class="siem-actions">
-                <span class="siem-action">Source: Wazuh</span>
-                <span class="siem-action">Source: Sysmon</span>
-                <span class="siem-action">Source: Security Onion</span>
-              </div>
+        <div class="card-row">
+          <article class="card">
+            <div class="card-visual"><span class="tag">sigma/windows_failed_logon.yml</span></div>
+            <div class="card-body">
+              <h3>Windows Failed Logon Rule</h3>
+              <p>Use Sigma as a featured item and connect it to Event ID 4625, Wazuh alerts, and bruteforce investigations.</p>
             </div>
-            <div class="siem-main">
-              <div class="siem-logpane">
-                <div class="siem-search">search index=lab source=wazuh OR source=sysmon OR source=security_onion</div>
-                <div id="activityFeed" class="activity-feed" aria-live="polite"></div>
+          </article>
+          <article class="card">
+            <div class="card-visual"><span class="tag">simulations/01-reconnaissance.md</span></div>
+            <div class="card-body">
+              <h3>Reconnaissance Phase</h3>
+              <p>Explain how attacker discovery actions create network indicators long before privilege escalation occurs.</p>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card-visual"><span class="tag">simulations/02-bruteforce.md</span></div>
+            <div class="card-body">
+              <h3>Bruteforce Sequence</h3>
+              <p>Map credential attacks to Ubuntu auth logs, Windows Event Logs, Wazuh detections, and Security Onion traffic.</p>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card-visual"><span class="tag">reports/02-mitre-coverage-matrix.md</span></div>
+            <div class="card-body">
+              <h3>MITRE Coverage Matrix</h3>
+              <p>Translate technical detections into ATT&amp;CK-aligned evidence of SOC maturity and structured security thinking.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="blueprints">
+      <div class="container">
+        <div class="highlights">
+          <div class="panel">
+            <h3>Repository Walkthrough Timeline</h3>
+            <div class="timeline">
+              <div class="step">
+                <div class="step-num">1</div>
+                <div>
+                  <strong>Scope the Lab</strong>
+                  <div>Start with project scope, inventory, and documentation roadmap so the lab tells a clear enterprise story.</div>
+                </div>
               </div>
-              <aside class="siem-side">
-                <div class="widget">
-                  <h4>Scenario Status</h4>
-                  <div class="status-pill paused" id="scenarioState">Paused</div>
-                  <div style="margin-top:.7rem;color:var(--muted)" id="scenarioSummary">Choose a scenario below to simulate alerts.</div>
+              <div class="step">
+                <div class="step-num">2</div>
+                <div>
+                  <strong>Map the Environment</strong>
+                  <div>Use architecture markdown and diagrams to explain trust boundaries, zones, and host relationships.</div>
                 </div>
-                <div class="widget">
-                  <h4>Rule Groups</h4>
-                  <div class="bar-list">
-                    <div class="bar-row"><span><b>windows_security</b><b>41%</b></span><div class="bar"><i style="width:41%"></i></div></div>
-                    <div class="bar-row"><span><b>authentication_failed</b><b>28%</b></span><div class="bar"><i style="width:28%"></i></div></div>
-                    <div class="bar-row"><span><b>sysmon_process</b><b>19%</b></span><div class="bar"><i style="width:19%"></i></div></div>
-                    <div class="bar-row"><span><b>suricata_scan</b><b>12%</b></span><div class="bar"><i style="width:12%"></i></div></div>
-                  </div>
+              </div>
+              <div class="step">
+                <div class="step-num">3</div>
+                <div>
+                  <strong>Show the Build Path</strong>
+                  <div>Document VM prep, networking, AD, Ubuntu, Kali, Wazuh, Security Onion, and optional Docker services.</div>
                 </div>
-                <div class="widget">
-                  <h4>Quick Metrics</h4>
-                  <div class="metrics-grid">
-                    <div class="metric"><strong id="metricEvents">0</strong><span>Events Loaded</span></div>
-                    <div class="metric"><strong id="metricHigh">0</strong><span>High Alerts</span></div>
-                    <div class="metric"><strong id="metricMedium">0</strong><span>Medium Alerts</span></div>
-                    <div class="metric"><strong id="metricTactic">—</strong><span>Active ATT&amp;CK</span></div>
-                  </div>
+              </div>
+              <div class="step">
+                <div class="step-num">4</div>
+                <div>
+                  <strong>Prove Detection Value</strong>
+                  <div>Connect simulations, rules, hunts, cases, and reporting so the portfolio reads like a real SOC workflow.</div>
                 </div>
-                <div class="widget">
-                  <h4>Analyst Guidance</h4>
-                  <div id="analystGuidance" style="color:var(--muted)">
-                    Start a scenario to see triage guidance, likely evidence sources, and recommended next steps.
-                  </div>
-                </div>
-              </aside>
+              </div>
             </div>
           </div>
           <div class="panel">
-            <h3>Dashboard Purpose</h3>
-            <ul class="feature-list">
-              <li><strong>Scenario-driven feed:</strong> the simulated alert stream updates when you play a scenario.</li>
-              <li><strong>Severity cues:</strong> high / medium / low event styling mirrors real triage workflows.</li>
-              <li><strong>Evidence linkage:</strong> each scenario maps to the relevant markdown file in your repo.</li>
-              <li><strong>Analyst context:</strong> the right-hand pane updates with what to check next.</li>
-            </ul>
-            <div class="repo-box">Use this area to replace simulated data with your real screenshots later:
-docs/screenshots/wazuh/
-docs/screenshots/security-onion/
-docs/screenshots/bruteforce/
-docs/screenshots/investigations/</div>
+            <h3>Core Stack</h3>
+            <div class="stack-list">
+              <div class="stack-item"><strong>Windows Server 2025</strong><span>AD DS, DNS, DHCP, enterprise identity services</span></div>
+              <div class="stack-item"><strong>Windows 11 Client</strong><span>User activity, logons, endpoint telemetry</span></div>
+              <div class="stack-item"><strong>Ubuntu + Docker</strong><span>SSH target, services, Linux logging, container options</span></div>
+              <div class="stack-item"><strong>Kali Linux</strong><span>Adversary simulation and validation testing</span></div>
+              <div class="stack-item"><strong>Security Onion</strong><span>Suricata, Zeek, hunts, network evidence</span></div>
+              <div class="stack-item"><strong>Wazuh</strong><span>SIEM alerts, correlation, investigations</span></div>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section id="scenarios">
+    <section id="detections">
       <div class="container">
         <div class="section-title">
-          <h2>Clickable Attack Scenarios</h2>
-          <span>Play / pause / inspect / open investigation</span>
+          <h2>Detection Strategy</h2>
+          <span>Endpoint + SIEM + Network visibility</span>
         </div>
-        <div class="attack-grid" id="attackGrid"></div>
-      </div>
-    </section>
-
-    <section id="mitre">
-      <div class="container">
-        <div class="section-title">
-          <h2>Interactive MITRE ATT&amp;CK Heatmap</h2>
-          <span>Click a technique to reveal the attack story and repo linkage</span>
-        </div>
-        <div class="heatmap-grid" id="heatmapGrid"></div>
-        <div class="heatmap-details" id="heatmapDetails">
-          <strong>Select a technique card.</strong>
-          <p style="margin:.55rem 0 0;color:var(--muted)">Technique details, detection source, scenario linkage, and GitHub documentation suggestions will appear here.</p>
+        <div class="dual-panels">
+          <div class="panel">
+            <h3>Detection Layers</h3>
+            <ul class="feature-list">
+              <li><strong>Endpoint:</strong> Windows Event Logs, Sysmon, Linux auth.log</li>
+              <li><strong>SIEM:</strong> Wazuh agents, rule tuning, alert triage, correlation</li>
+              <li><strong>Network:</strong> Security Onion using Suricata and Zeek</li>
+              <li><strong>Threat Modeling:</strong> MITRE ATT&amp;CK coverage across attack stages</li>
+            </ul>
+            <div class="code-box">Attack  →  Logs  →  Detection  →  Correlation  →  Investigation  →  Reporting</div>
+          </div>
+          <div class="panel">
+            <h3>Detection Coverage Snapshot</h3>
+            <div class="heatmap">
+              <div class="heatmap-item"><strong>T1046</strong><span>Recon / Nmap</span></div>
+              <div class="heatmap-item"><strong>T1110</strong><span>Bruteforce</span></div>
+              <div class="heatmap-item"><strong>T1021</strong><span>Lateral Movement</span></div>
+              <div class="heatmap-item"><strong>T1059</strong><span>PowerShell</span></div>
+              <div class="heatmap-item"><strong>T1053</strong><span>Persistence</span></div>
+              <div class="heatmap-item"><strong>T1068</strong><span>Privilege Escalation</span></div>
+            </div>
+            <div class="button-row">
+              <a class="btn btn-secondary" href="#docs-links">Open Detection Docs</a>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -1035,46 +779,30 @@ docs/screenshots/investigations/</div>
       <div class="container">
         <div class="section-title">
           <h2>Case Investigation Tracks</h2>
-          <span>Modal popups bring your investigations to life</span>
+          <span>Tell the analyst story, not just the tool story</span>
         </div>
-        <div class="highlights">
-          <div class="panel">
-            <h3>Case Timeline</h3>
-            <div class="timeline">
-              <div class="step">
-                <div class="step-num">01</div>
-                <div>
-                  <strong>SSH Bruteforce Against Ubuntu</strong>
-                  <div>Hydra from Kali → auth.log failures → Wazuh alert → Security Onion network confirmation → analyst conclusion.</div>
-                </div>
-              </div>
-              <div class="step">
-                <div class="step-num">02</div>
-                <div>
-                  <strong>Windows Failed Logon Case</strong>
-                  <div>Event ID 4625 → repeated authentication failures → source host identified → internal attack path reviewed.</div>
-                </div>
-              </div>
-              <div class="step">
-                <div class="step-num">03</div>
-                <div>
-                  <strong>Suspicious PowerShell Execution</strong>
-                  <div>Sysmon Event ID 1 → encoded or bypassed PowerShell → Wazuh correlation → post-exploitation investigation.</div>
-                </div>
+        <div class="panel">
+          <div class="track-list">
+            <div class="track-item">
+              <div class="track-num">01</div>
+              <div>
+                <strong>SSH Bruteforce Against Ubuntu</strong>
+                <div>Hydra from Kali → auth.log failures → Wazuh alert → Security Onion network confirmation → analyst conclusion.</div>
               </div>
             </div>
-          </div>
-          <div class="panel">
-            <h3>Investigation Actions</h3>
-            <ul class="feature-list">
-              <li>Click any scenario card to open a full modal investigation report.</li>
-              <li>Use the play button to populate the fake SIEM UI with matching events.</li>
-              <li>Use GitHub links to jump directly into the markdown backing each scenario.</li>
-              <li>Swap simulated evidence references for your real screenshots as you capture them.</li>
-            </ul>
-            <div class="button-row">
-              <button class="btn btn-secondary" id="openDefaultCase">Open SSH Case</button>
-              <a class="btn btn-primary" href="#docs-links">Open GitHub Links</a>
+            <div class="track-item">
+              <div class="track-num">02</div>
+              <div>
+                <strong>Windows Failed Logon Case</strong>
+                <div>Event ID 4625 → repeated authentication failures → source host identified → internal attack path reviewed.</div>
+              </div>
+            </div>
+            <div class="track-item">
+              <div class="track-num">03</div>
+              <div>
+                <strong>Suspicious PowerShell Execution</strong>
+                <div>Sysmon Event ID 1 → encoded or bypassed PowerShell → Wazuh correlation → post-exploitation investigation.</div>
+              </div>
             </div>
           </div>
         </div>
@@ -1085,11 +813,11 @@ docs/screenshots/investigations/</div>
       <div class="container">
         <div class="section-title">
           <h2>Repository Structure</h2>
-          <span>Kept fully compatible with your current layout</span>
+          <span>Preserved to match your requested tree</span>
         </div>
         <div class="panel">
           <p style="margin-top:0;color:var(--muted)">
-            The homepage remains suitable for <strong>docs/index.html</strong> on GitHub Pages, while every major interactive section maps back to your existing markdown structure.
+            The homepage is designed to live in <strong>docs/index.html</strong> for GitHub Pages while keeping the rest of the repository clean for technical review.
           </p>
           <div class="repo-box">.
 .gitignore
@@ -1162,74 +890,60 @@ simulations/
     <section id="docs-links">
       <div class="container">
         <div class="section-title">
-          <h2>GitHub Auto-Link Integration</h2>
-          <span>Pre-wired to your repository URL pattern</span>
+          <h2>Suggested GitHub Documentation Links</h2>
+          <span>Replace <code>YOUR-USERNAME</code> if needed</span>
         </div>
         <div class="docs-grid">
           <div class="doc-card">
             <span class="mini-tag">docs/</span>
             <h4>Project Scope</h4>
             <p>Mission, inventory, roadmap, interview notes, and LinkedIn showcase content.</p>
-            <a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/docs/00-project-scope.md" target="_blank" rel="noreferrer">Open document</a>
+            <a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/docs/00-project-scope.md">Open document</a>
           </div>
           <div class="doc-card">
             <span class="mini-tag">architecture/</span>
             <h4>Architecture Overview</h4>
             <p>Explain network zones, system relationships, and diagrams for reviewers.</p>
-            <a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/architecture/00-overview.md" target="_blank" rel="noreferrer">Open document</a>
+            <a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/architecture/00-overview.md">Open document</a>
           </div>
           <div class="doc-card">
             <span class="mini-tag">infrastructure/</span>
             <h4>Build Documentation</h4>
             <p>VM preparation, networking, AD, Ubuntu, Kali, Wazuh, and Security Onion deployment.</p>
-            <a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/infrastructure/00-build-order.md" target="_blank" rel="noreferrer">Open document</a>
+            <a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/infrastructure/00-build-order.md">Open document</a>
           </div>
           <div class="doc-card">
             <span class="mini-tag">detections/</span>
             <h4>Detection Strategy</h4>
             <p>Wazuh rules, Sysmon signals, Security Onion hunts, and Sigma-based mapping.</p>
-            <a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/detections/00-detection-strategy.md" target="_blank" rel="noreferrer">Open document</a>
+            <a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/detections/00-detection-strategy.md">Open document</a>
           </div>
           <div class="doc-card">
             <span class="mini-tag">simulations/</span>
             <h4>Attack Simulations</h4>
             <p>Recon, bruteforce, lateral movement, privilege escalation, persistence, and Linux-focused attacks.</p>
-            <a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/simulations/00-simulation-index.md" target="_blank" rel="noreferrer">Open document</a>
+            <a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/simulations/00-simulation-index.md">Open document</a>
           </div>
           <div class="doc-card">
             <span class="mini-tag">investigations/</span>
             <h4>Case Investigations</h4>
             <p>Case files that show analyst reasoning, timeline reconstruction, and recommendations.</p>
-            <a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/investigations/00-investigation-method.md" target="_blank" rel="noreferrer">Open document</a>
+            <a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/investigations/00-investigation-method.md">Open document</a>
           </div>
         </div>
       </div>
     </section>
   </main>
 
-  <div class="modal-backdrop" id="modalBackdrop" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <div class="modal-head">
-        <div>
-          <div class="mini-tag" id="modalTag">Investigation</div>
-          <h3 id="modalTitle" style="margin-top:.4rem">Case Title</h3>
-        </div>
-        <button class="modal-close" id="modalClose" aria-label="Close modal">✕</button>
-      </div>
-      <div class="modal-body" id="modalBody"></div>
-    </div>
-  </div>
-
   <footer class="footer">
     <div class="container">
       <div class="footer-box">
-        Phase 2 dashboard upgrade built on the uploaded current website version and its structure, then expanded into an interactive portfolio with scenario controls, ATT&amp;CK heatmap, modal case reporting, GitHub auto-linking, and a fake SIEM console. Based on your uploaded current HTML file fileciteturn1file0
+        Upgraded from the current single-file homepage structure in your uploaded <code>index.html</code> and expanded into a more recruiter-facing, repo-aware portfolio layout. Replace GitHub placeholder links, add your screenshots, and publish via GitHub Pages. Based on your uploaded file structure and content direction fileciteturn0file0
       </div>
     </div>
   </footer>
 
   <script>
-    // Hero carousel
     (function () {
       const carousel = document.getElementById('heroCarousel');
       const slidesWrap = carousel.querySelector('.slides');
@@ -1269,11 +983,21 @@ simulations/
         }
       }
 
-      prevBtn.addEventListener('click', () => { prevSlide(); startAutoPlay(); });
-      nextBtn.addEventListener('click', () => { nextSlide(); startAutoPlay(); });
+      prevBtn.addEventListener('click', () => {
+        prevSlide();
+        startAutoPlay();
+      });
+
+      nextBtn.addEventListener('click', () => {
+        nextSlide();
+        startAutoPlay();
+      });
 
       dots.forEach((dot, i) => {
-        dot.addEventListener('click', () => { goToSlide(i); startAutoPlay(); });
+        dot.addEventListener('click', () => {
+          goToSlide(i);
+          startAutoPlay();
+        });
       });
 
       carousel.addEventListener('mouseenter', stopAutoPlay);
@@ -1289,450 +1013,6 @@ simulations/
       updateCarousel();
       startAutoPlay();
     })();
-
-    const scenarios = [
-      {
-        id: "ssh",
-        title: "SSH Bruteforce Against Ubuntu",
-        tactic: "Credential Access",
-        technique: "T1110",
-        severity: "high",
-        simPath: "simulations/02-bruteforce.md",
-        invPath: "investigations/01-ssh-bruteforce-case.md",
-        detectionPath: "detections/01-wazuh-rules.md",
-        summary: "Hydra from Kali targets Ubuntu SSH and triggers Linux auth.log failures, Wazuh alerts, and Security Onion traffic evidence.",
-        analyst: "Validate repeated failed SSH logins, confirm source IP, correlate auth.log with Wazuh alert count, and review Security Onion ssh activity.",
-        timeline: [
-          { source: "Kali", title: "Hydra initiated", desc: "Hydra starts repeated SSH login attempts toward Ubuntu.", severity: "medium", meta: ["hydra", "ssh://192.168.117.129", "source 192.168.117.140"] },
-          { source: "Ubuntu", title: "auth.log failures", desc: "Failed password entries accumulate in /var/log/auth.log.", severity: "medium", meta: ["auth.log", "failed password", "user invalid"] },
-          { source: "Wazuh", title: "SSH bruteforce alert", desc: "Wazuh correlates repeated SSH failures into a detection event.", severity: "high", meta: ["rule: brute force", "alerted", "linux auth"] },
-          { source: "Security Onion", title: "Repeated SSH traffic", desc: "Network view confirms frequent SSH connections from attacker IP.", severity: "medium", meta: ["suricata/zeek", "ssh", "traffic pattern"] }
-        ],
-        report: {
-          executive: "A brute-force attack targeted the Ubuntu SSH service from Kali. The activity was observed in auth.log, correlated in Wazuh, and confirmed by network telemetry.",
-          evidence: ["Hydra command execution on Kali", "Repeated auth.log failures on Ubuntu", "Wazuh SSH brute-force alert", "Security Onion SSH connection pattern"],
-          impact: "No confirmed successful login. Attack limited to authentication attempts.",
-          recommendations: ["Enable Fail2Ban or rate limiting", "Restrict SSH source IPs", "Move to key-based SSH auth", "Tune Wazuh thresholds for repeated auth failures"]
-        }
-      },
-      {
-        id: "windows",
-        title: "Windows Failed Logon Attack",
-        tactic: "Credential Access",
-        technique: "T1110",
-        severity: "high",
-        simPath: "simulations/02-bruteforce.md",
-        invPath: "investigations/02-windows-logon-case.md",
-        detectionPath: "detections/sigma/windows_failed_logon.yml",
-        summary: "Repeated failed Windows authentication attempts generate Event ID 4625 and are correlated by Wazuh from an internal source host.",
-        analyst: "Review Event ID 4625 on DC01 or target system, identify source host/IP, determine targeted account, and assess whether login succeeded later.",
-        timeline: [
-          { source: "Win11Client", title: "Failed runas attempts", desc: "Repeated bad credentials are submitted using runas or similar authentication requests.", severity: "medium", meta: ["runas", "bad password", "Win11Client"] },
-          { source: "Windows Security", title: "Event ID 4625", desc: "Failed logon entries are recorded with source information and failure reason.", severity: "high", meta: ["4625", "bad password", "source ip"] },
-          { source: "Wazuh", title: "Authentication alert", desc: "Wazuh groups repeated failed logons into a meaningful alert.", severity: "high", meta: ["wazuh", "failed login", "correlation"] },
-          { source: "Analyst", title: "Source host validated", desc: "The analyst ties the failures to an internal workstation and reviews follow-on activity.", severity: "medium", meta: ["source host", "triage", "internal threat"] }
-        ],
-        report: {
-          executive: "A Windows credential attack was simulated from an internal workstation and detected using Event ID 4625 and Wazuh rule correlation.",
-          evidence: ["Repeated Event ID 4625 records", "Source IP / host mapping", "Wazuh failed logon alert", "No matching successful privileged logon"],
-          impact: "No evidence of successful compromise during the simulation window.",
-          recommendations: ["Implement account lockout policy", "Review password hygiene", "Tune alerts for repeated internal failures", "Correlate 4625 with 4624 and 4672 events"]
-        }
-      },
-      {
-        id: "powershell",
-        title: "Suspicious PowerShell Execution",
-        tactic: "Execution",
-        technique: "T1059.001",
-        severity: "high",
-        simPath: "simulations/04-privilege-escalation.md",
-        invPath: "investigations/03-powershell-case.md",
-        detectionPath: "detections/02-sysmon.md",
-        summary: "Suspicious PowerShell with bypassed execution or encoded command arguments appears in Sysmon and is surfaced by Wazuh.",
-        analyst: "Inspect Sysmon Event ID 1, review the command line, trace parent process, and check for persistence or follow-on activity.",
-        timeline: [
-          { source: "Win11Client", title: "PowerShell launched", desc: "powershell.exe is executed with bypass or encoded parameters.", severity: "high", meta: ["powershell", "-exec bypass", "-EncodedCommand"] },
-          { source: "Sysmon", title: "Process creation captured", desc: "Sysmon Event ID 1 records image, parent, user, and command line.", severity: "high", meta: ["Event ID 1", "cmd.exe → powershell.exe", "commandline"] },
-          { source: "Wazuh", title: "Suspicious command alert", desc: "Wazuh identifies suspicious PowerShell execution patterns.", severity: "high", meta: ["rule", "powershell", "obfuscation"] },
-          { source: "Analyst", title: "Host review started", desc: "Analyst checks scheduled tasks, registry run keys, and recent activity for persistence.", severity: "medium", meta: ["persistence check", "host investigation", "triage"] }
-        ],
-        report: {
-          executive: "Suspicious PowerShell execution consistent with post-exploitation behavior was identified on a Windows endpoint using Sysmon and Wazuh.",
-          evidence: ["Sysmon Event ID 1 process details", "Suspicious PowerShell flags", "Wazuh alert for command-line anomaly", "Potential parent-child process chain"],
-          impact: "Potential execution, persistence setup, or privilege escalation path if left unchecked.",
-          recommendations: ["Enable Script Block Logging", "Restrict PowerShell usage", "Detect EncodedCommand patterns", "Use AppLocker or WDAC", "Inspect persistence locations"]
-        }
-      },
-      {
-        id: "recon",
-        title: "Reconnaissance Scan",
-        tactic: "Reconnaissance",
-        technique: "T1046",
-        severity: "medium",
-        simPath: "simulations/01-reconnaissance.md",
-        invPath: "investigations/00-investigation-method.md",
-        detectionPath: "detections/03-security-onion-hunts.md",
-        summary: "Nmap scanning from Kali produces early-warning network telemetry in Security Onion before compromise occurs.",
-        analyst: "Review Suricata alerts, Zeek connection logs, and target IP spread to determine scope and intent of the scan.",
-        timeline: [
-          { source: "Kali", title: "Nmap scan started", desc: "nmap -sS 192.168.117.0/24 enumerates the internal subnet.", severity: "medium", meta: ["nmap", "subnet scan", "kali"] },
-          { source: "Security Onion", title: "Suricata scan alert", desc: "IDS identifies suspicious scanning activity across multiple hosts.", severity: "medium", meta: ["suricata", "scan", "t1046"] },
-          { source: "Zeek", title: "Connection metadata captured", desc: "Zeek logs multiple connection attempts across the target range.", severity: "low", meta: ["zeek", "conn.log", "scope"] },
-          { source: "Analyst", title: "Attack path preparation", desc: "Analyst uses scan pattern to anticipate likely next stages such as bruteforce or lateral movement.", severity: "low", meta: ["triage", "scope", "next-stage"] }
-        ],
-        report: {
-          executive: "Reconnaissance scanning was observed across the enterprise subnet from the Kali host and was detected at the network layer before any authentication attempts.",
-          evidence: ["Nmap command execution", "Suricata scan alert", "Zeek connection spread", "Source IP mapped to Kali"],
-          impact: "No direct compromise, but meaningful precursor activity indicating target discovery and attack staging.",
-          recommendations: ["Alert early on subnet scanning", "Baseline normal internal scanning", "Correlate reconnaissance with later auth events", "Review segmentation opportunities"]
-        }
-      }
-    ];
-
-    const mitreCards = [
-      {
-        code: "T1046",
-        title: "Network Service Discovery",
-        source: "Security Onion",
-        scenario: "Reconnaissance Scan",
-        detection: "Suricata scan alerts + Zeek connection metadata",
-        repo: "reports/02-mitre-coverage-matrix.md",
-        details: "Early detection of attack staging before authentication attempts or execution behaviors begin."
-      },
-      {
-        code: "T1110",
-        title: "Brute Force",
-        source: "Wazuh + Windows/Linux Logs",
-        scenario: "SSH Bruteforce / Windows Failed Logons",
-        detection: "auth.log failures + Event ID 4625 + Wazuh correlation",
-        repo: "detections/01-wazuh-rules.md",
-        details: "Core credential-access coverage that demonstrates how host logs and SIEM rules surface repeated failures."
-      },
-      {
-        code: "T1021",
-        title: "Remote Services",
-        source: "Wazuh + Security Onion",
-        scenario: "Lateral Movement",
-        detection: "SMB access attempts, network logons, host-side auth events",
-        repo: "simulations/03-lateral-movement.md",
-        details: "Shows movement between internal systems and the importance of correlating authentication with network traffic."
-      },
-      {
-        code: "T1059.001",
-        title: "PowerShell",
-        source: "Sysmon + Wazuh",
-        scenario: "Suspicious PowerShell Execution",
-        detection: "Sysmon Event ID 1, encoded commands, parent-child process chain",
-        repo: "investigations/03-powershell-case.md",
-        details: "High-value endpoint detection for post-exploitation, malicious scripting, and living-off-the-land behavior."
-      },
-      {
-        code: "T1053",
-        title: "Scheduled Task / Job",
-        source: "Wazuh + Sysmon",
-        scenario: "Persistence",
-        detection: "Event ID 4698 + process tracking",
-        repo: "simulations/05-persistence.md",
-        details: "Persistence-focused detection that proves the lab covers behavior after initial access."
-      },
-      {
-        code: "T1068",
-        title: "Privilege Escalation",
-        source: "Windows Security + Sysmon",
-        scenario: "Privilege Escalation",
-        detection: "Event ID 4672, privileged process context, admin-oriented execution patterns",
-        repo: "simulations/04-privilege-escalation.md",
-        details: "Useful for showing how analyst attention shifts from simple auth events to high-impact admin context."
-      }
-    ];
-
-    const feed = document.getElementById('activityFeed');
-    const attackGrid = document.getElementById('attackGrid');
-    const heatmapGrid = document.getElementById('heatmapGrid');
-    const heatmapDetails = document.getElementById('heatmapDetails');
-    const scenarioState = document.getElementById('scenarioState');
-    const scenarioSummary = document.getElementById('scenarioSummary');
-    const analystGuidance = document.getElementById('analystGuidance');
-    const metricEvents = document.getElementById('metricEvents');
-    const metricHigh = document.getElementById('metricHigh');
-    const metricMedium = document.getElementById('metricMedium');
-    const metricTactic = document.getElementById('metricTactic');
-    const modalBackdrop = document.getElementById('modalBackdrop');
-    const modalClose = document.getElementById('modalClose');
-    const modalTitle = document.getElementById('modalTitle');
-    const modalTag = document.getElementById('modalTag');
-    const modalBody = document.getElementById('modalBody');
-    const openDefaultCase = document.getElementById('openDefaultCase');
-
-    let activeScenarioId = null;
-    let playingScenarioId = null;
-    let playbackTimer = null;
-    let playbackIndex = 0;
-    let loadedEvents = [];
-
-    function severityLabel(sev) {
-      if (sev === 'high') return 'High';
-      if (sev === 'medium') return 'Medium';
-      return 'Low';
-    }
-
-    function createEventNode(event, idx) {
-      const div = document.createElement('article');
-      div.className = `event-item ${event.severity}`;
-      div.innerHTML = `
-        <div class="event-top">
-          <div>
-            <div class="event-title">${idx + 1}. ${event.title}</div>
-            <div class="event-meta">
-              <span>${event.source}</span>
-              <span>${severityLabel(event.severity)}</span>
-            </div>
-          </div>
-          <span class="status-pill">${event.source}</span>
-        </div>
-        <div class="event-desc">${event.desc}</div>
-        <div class="event-badges">
-          ${event.meta.map(m => `<span class="mini-tag">${m}</span>`).join('')}
-        </div>
-      `;
-      return div;
-    }
-
-    function updateMetrics() {
-      metricEvents.textContent = String(loadedEvents.length);
-      metricHigh.textContent = String(loadedEvents.filter(e => e.severity === 'high').length);
-      metricMedium.textContent = String(loadedEvents.filter(e => e.severity === 'medium').length);
-    }
-
-    function resetFeed() {
-      loadedEvents = [];
-      feed.innerHTML = "";
-      updateMetrics();
-    }
-
-    function setScenarioStatus(state, summary) {
-      scenarioState.textContent = state;
-      scenarioState.classList.remove('playing', 'paused');
-      scenarioState.classList.add(state.toLowerCase() === 'playing' ? 'playing' : 'paused');
-      scenarioSummary.textContent = summary;
-    }
-
-    function updateCardButtons() {
-      document.querySelectorAll('.attack-card').forEach(card => {
-        card.classList.toggle('active-card', card.dataset.id === activeScenarioId);
-      });
-      document.querySelectorAll('.mini-btn[data-action="play"]').forEach(btn => {
-        const isPlaying = btn.dataset.id === playingScenarioId;
-        btn.classList.toggle('active', isPlaying);
-        btn.textContent = isPlaying ? 'Playing…' : 'Play';
-      });
-    }
-
-    function stopPlayback(updateSummary = true) {
-      if (playbackTimer) {
-        clearInterval(playbackTimer);
-        playbackTimer = null;
-      }
-      playingScenarioId = null;
-      updateCardButtons();
-      if (updateSummary) {
-        setScenarioStatus('Paused', activeScenarioId ? 'Scenario selected. Press Play to simulate alert flow.' : 'Choose a scenario below to simulate alerts.');
-      }
-    }
-
-    function appendNextEvent(scenario) {
-      if (playbackIndex >= scenario.timeline.length) {
-        stopPlayback(false);
-        setScenarioStatus('Paused', `${scenario.title} completed. Review the feed and open the report for investigation details.`);
-        return;
-      }
-      const event = scenario.timeline[playbackIndex];
-      loadedEvents.push(event);
-      feed.appendChild(createEventNode(event, loadedEvents.length - 1));
-      feed.scrollTop = feed.scrollHeight;
-      updateMetrics();
-      playbackIndex += 1;
-    }
-
-    function playScenario(scenarioId) {
-      const scenario = scenarios.find(s => s.id === scenarioId);
-      if (!scenario) return;
-      activeScenarioId = scenarioId;
-      playbackIndex = 0;
-      resetFeed();
-      if (playbackTimer) {
-        clearInterval(playbackTimer);
-        playbackTimer = null;
-      }
-      playingScenarioId = scenarioId;
-      updateCardButtons();
-      setScenarioStatus('Playing', `Simulating ${scenario.title}`);
-      analystGuidance.textContent = scenario.analyst;
-      metricTactic.textContent = scenario.technique;
-      appendNextEvent(scenario);
-      playbackTimer = setInterval(() => appendNextEvent(scenario), 1500);
-      document.getElementById('dashboard').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    function pauseScenario() {
-      stopPlayback();
-    }
-
-    function openScenarioModal(scenarioId) {
-      const scenario = scenarios.find(s => s.id === scenarioId);
-      if (!scenario) return;
-      modalTag.textContent = `${scenario.technique} • ${scenario.tactic}`;
-      modalTitle.textContent = scenario.title;
-      modalBody.innerHTML = `
-        <div class="modal-grid">
-          <div class="report-box">
-            <h4>Executive Summary</h4>
-            <p>${scenario.report.executive}</p>
-            <h4>Evidence Collected</h4>
-            <ul class="report-list">
-              ${scenario.report.evidence.map(item => `<li>${item}</li>`).join('')}
-            </ul>
-            <h4 style="margin-top:1rem">Impact Assessment</h4>
-            <p>${scenario.report.impact}</p>
-          </div>
-          <div class="report-box">
-            <h4>Investigation Metadata</h4>
-            <div class="report-kv">
-              <div class="widget"><h4>Technique</h4><div>${scenario.technique}</div></div>
-              <div class="widget"><h4>Tactic</h4><div>${scenario.tactic}</div></div>
-              <div class="widget"><h4>Simulation Doc</h4><div><a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/${scenario.simPath}" target="_blank" rel="noreferrer">${scenario.simPath}</a></div></div>
-              <div class="widget"><h4>Investigation Doc</h4><div><a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/${scenario.invPath}" target="_blank" rel="noreferrer">${scenario.invPath}</a></div></div>
-            </div>
-            <h4 style="margin-top:1rem">Recommended Actions</h4>
-            <ul class="report-list">
-              ${scenario.report.recommendations.map(item => `<li>${item}</li>`).join('')}
-            </ul>
-          </div>
-        </div>
-        <div class="report-box">
-          <h4>Timeline Reconstruction</h4>
-          <div class="timeline">
-            ${scenario.timeline.map((event, i) => `
-              <div class="step">
-                <div class="step-num">${String(i + 1).padStart(2, '0')}</div>
-                <div>
-                  <strong>${event.title}</strong>
-                  <div style="color:var(--muted)">${event.desc}</div>
-                  <div class="event-badges" style="margin-top:.5rem">
-                    ${event.meta.map(m => `<span class="mini-tag">${m}</span>`).join('')}
-                  </div>
-                </div>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `;
-      modalBackdrop.classList.add('open');
-      modalBackdrop.setAttribute('aria-hidden', 'false');
-    }
-
-    function closeModal() {
-      modalBackdrop.classList.remove('open');
-      modalBackdrop.setAttribute('aria-hidden', 'true');
-    }
-
-    function renderAttackCards() {
-      attackGrid.innerHTML = scenarios.map(scenario => `
-        <article class="attack-card" data-id="${scenario.id}">
-          <div class="attack-body">
-            <div class="attack-header">
-              <span class="mini-tag">${scenario.technique}</span>
-              <span class="status-pill paused" id="status-${scenario.id}">${severityLabel(scenario.severity)}</span>
-            </div>
-            <h3>${scenario.title}</h3>
-            <p>${scenario.summary}</p>
-            <div class="repo-box" style="font-size:.84rem">Simulation: ${scenario.simPath}
-Investigation: ${scenario.invPath}
-Detection: ${scenario.detectionPath}</div>
-            <div class="attack-controls">
-              <button type="button" class="mini-btn" data-action="play" data-id="${scenario.id}">Play</button>
-              <button type="button" class="mini-btn" data-action="pause" data-id="${scenario.id}">Pause</button>
-              <button type="button" class="mini-btn" data-action="modal" data-id="${scenario.id}">Open Report</button>
-              <a class="mini-btn" href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/${scenario.simPath}" target="_blank" rel="noreferrer">GitHub</a>
-            </div>
-          </div>
-        </article>
-      `).join('');
-
-      attackGrid.querySelectorAll('.mini-btn[data-action="play"]').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          playScenario(btn.dataset.id);
-        });
-      });
-      attackGrid.querySelectorAll('.mini-btn[data-action="pause"]').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          pauseScenario();
-        });
-      });
-      attackGrid.querySelectorAll('.mini-btn[data-action="modal"]').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          openScenarioModal(btn.dataset.id);
-        });
-      });
-      updateCardButtons();
-      attackGrid.querySelectorAll('.attack-card').forEach(card => {
-        card.addEventListener('click', () => openScenarioModal(card.dataset.id));
-      });
-    }
-
-    function renderHeatmap() {
-      heatmapGrid.innerHTML = mitreCards.map((item, idx) => `
-        <article class="heatmap-card ${idx === 0 ? 'active' : ''}" data-code="${item.code}">
-          <div class="heatmap-code">${item.code}</div>
-          <h4>${item.title}</h4>
-          <p>${item.scenario}</p>
-          <div class="heatmap-severity">Source: ${item.source}</div>
-        </article>
-      `).join('');
-
-      function setDetails(code) {
-        const item = mitreCards.find(m => m.code === code);
-        if (!item) return;
-        heatmapDetails.innerHTML = `
-          <strong>${item.code} — ${item.title}</strong>
-          <p style="margin:.55rem 0;color:var(--muted)">${item.details}</p>
-          <div class="report-kv">
-            <div class="widget"><h4>Scenario</h4><div>${item.scenario}</div></div>
-            <div class="widget"><h4>Detection Source</h4><div>${item.source}</div></div>
-            <div class="widget"><h4>Repo File</h4><div><a href="https://github.com/vincetita/enterprise-ad-soc-lab/blob/main/${item.repo}" target="_blank" rel="noreferrer">${item.repo}</a></div></div>
-            <div class="widget"><h4>Detection Logic</h4><div>${item.detection}</div></div>
-          </div>
-        `;
-      }
-
-      heatmapGrid.querySelectorAll('.heatmap-card').forEach(card => {
-        card.addEventListener('click', () => {
-          heatmapGrid.querySelectorAll('.heatmap-card').forEach(c => c.classList.remove('active'));
-          card.classList.add('active');
-          setDetails(card.dataset.code);
-        });
-      });
-
-      setDetails(mitreCards[0].code);
-    }
-
-    renderAttackCards();
-    renderHeatmap();
-
-    modalClose.addEventListener('click', closeModal);
-    modalBackdrop.addEventListener('click', (e) => {
-      if (e.target === modalBackdrop) closeModal();
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeModal();
-    });
-    openDefaultCase.addEventListener('click', () => openScenarioModal('ssh'));
   </script>
 </body>
 </html>
